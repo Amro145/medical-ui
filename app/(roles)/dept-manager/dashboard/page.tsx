@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import data from "@/public/data/data.json";
-import { User, LogOut, Loader2, Building, Edit, RefreshCw, X, CheckSquare } from "lucide-react";
+import { User, LogOut, Loader2, Building, Edit, RefreshCw, X, CheckSquare, UserPlus } from "lucide-react";
 import Link from "next/link";
 
 export default function DeptManagerDashboard() {
@@ -20,6 +20,10 @@ export default function DeptManagerDashboard() {
   const [isShiftModalOpen, setIsShiftModalOpen] = useState(false);
   const [editingDoctorId, setEditingDoctorId] = useState<string | null>(null);
   const [newShiftValue, setNewShiftValue] = useState("");
+
+  const [isAddDoctorModalOpen, setIsAddDoctorModalOpen] = useState(false);
+  const [newDoctorName, setNewDoctorName] = useState("");
+  const [newDoctorShift, setNewDoctorShift] = useState("صباحي (08:00 - 16:00)");
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 500);
@@ -56,6 +60,24 @@ export default function DeptManagerDashboard() {
 
     setIsShiftModalOpen(false);
     setEditingDoctorId(null);
+  };
+
+  const handleAddDoctor = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newDoctorName.trim()) return;
+
+    setLocalShifts(prev => [
+      ...prev,
+      {
+        doctorId: `doc_${Date.now()}`,
+        doctorName: newDoctorName,
+        shift: newDoctorShift
+      }
+    ]);
+
+    setIsAddDoctorModalOpen(false);
+    setNewDoctorName("");
+    setNewDoctorShift("صباحي (08:00 - 16:00)");
   };
 
   const handleReassign = (appointmentId: string) => {
@@ -100,11 +122,18 @@ export default function DeptManagerDashboard() {
         
         {/* Left Column: Shift Management */}
         <section className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-          <div className="p-5 border-b border-slate-100 bg-indigo-50/50">
+          <div className="p-5 border-b border-slate-100 bg-indigo-50/50 flex justify-between items-center">
              <h2 className="text-lg font-bold text-indigo-900 flex items-center gap-2">
                 <Edit className="h-5 w-5 text-indigo-600" />
                 إدارة مناوبات الأطباء
              </h2>
+             <button
+               onClick={() => setIsAddDoctorModalOpen(true)}
+               className="px-3 py-2 bg-indigo-600 text-white font-bold text-sm rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2 shadow-sm"
+             >
+                <UserPlus className="h-4 w-4" />
+                إضافة طبيب
+             </button>
           </div>
           <div className="p-4 flex flex-col gap-3">
              {localShifts.map((shiftInfo, idx) => (
@@ -173,6 +202,55 @@ export default function DeptManagerDashboard() {
         </section>
 
       </main>
+
+      {/* Add Doctor Modal */}
+      {isAddDoctorModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+           <div className="bg-white rounded-2xl w-full max-w-sm shadow-xl animate-in zoom-in-95 duration-200 overflow-hidden">
+              <div className="border-b border-indigo-100 bg-indigo-50 px-6 py-4 flex items-center justify-between z-10">
+                 <h2 className="text-xl font-bold flex items-center gap-2 text-indigo-900">
+                    <UserPlus className="h-5 w-5 text-indigo-600" />
+                    إضافة طبيب جديد
+                 </h2>
+                 <button onClick={() => setIsAddDoctorModalOpen(false)} className="p-2 hover:bg-indigo-100 rounded-full transition-colors text-indigo-700">
+                    <X className="h-5 w-5 text-indigo-600" />
+                 </button>
+              </div>
+              <div className="p-6">
+                 <form onSubmit={handleAddDoctor} className="flex flex-col gap-5">
+                    <div>
+                      <label className="text-sm font-bold text-slate-700 block mb-2">اسم الطبيب الكامل:</label>
+                      <input 
+                        type="text"
+                        value={newDoctorName}
+                        onChange={(e) => setNewDoctorName(e.target.value)}
+                        placeholder="مثال: د. أحمد خالد..."
+                        className="px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none w-full bg-slate-50 focus:bg-white transition-colors"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm font-bold text-slate-700 block mb-2">اختر الوردية (المناوبة):</label>
+                      <select 
+                        value={newDoctorShift}
+                        onChange={(e) => setNewDoctorShift(e.target.value)}
+                        className="px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none w-full bg-slate-50 focus:bg-white transition-colors"
+                        required
+                      >
+                         <option value="صباحي (08:00 - 16:00)">صباحي (08:00 - 16:00)</option>
+                         <option value="مسائي (16:00 - 00:00)">مسائي (16:00 - 00:00)</option>
+                         <option value="ليلي (00:00 - 08:00)">ليلي (00:00 - 08:00)</option>
+                      </select>
+                    </div>
+                    <div className="flex gap-3 mt-2">
+                       <button type="submit" className="flex-1 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 shadow-sm transition-colors">إضافة الطبيب</button>
+                       <button type="button" onClick={() => setIsAddDoctorModalOpen(false)} className="px-5 py-3 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition-colors">إلغاء</button>
+                    </div>
+                 </form>
+              </div>
+           </div>
+        </div>
+      )}
 
       {/* Edit Shift Modal */}
       {isShiftModalOpen && (

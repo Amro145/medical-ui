@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import data from "@/public/data/data.json";
 import { UserCircle, CalendarDays, Phone, MapPin, Droplet, Clock, CalendarPlus, Loader2, Edit3, X, CheckSquare, Activity } from "lucide-react";
+import Link from "next/link";
 
 export default function PatientDashboard() {
   const { patients, doctor } = data;
@@ -133,13 +134,13 @@ export default function PatientDashboard() {
              <div className="bg-slate-50 border border-dashed border-slate-200 rounded-2xl p-8 text-center">
                 <CalendarDays className="h-10 w-10 text-slate-300 mx-auto mb-3" />
                 <p className="text-slate-500 font-medium mb-4">لا توجد مواعيد قادمة مجدولة حالياً</p>
-                <button 
-                  onClick={() => setIsBookingOpen(true)}
-                  className="px-6 py-2.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 shadow-md transition-colors flex items-center justify-center gap-2 mx-auto"
+                <Link 
+                  href="/patient/appointments"
+                  className="w-fit px-6 py-2.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 shadow-md transition-colors flex items-center justify-center gap-2 mx-auto"
                 >
                   <CalendarPlus className="h-4 w-4" />
-                  حجز موعد جديد
-                </button>
+                  حجز موعد جديد بالقائمة المتقدمة
+                </Link>
              </div>
            )}
         </section>
