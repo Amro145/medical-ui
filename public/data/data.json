@@ -222,12 +222,14 @@
         {
           "medicineId": "med_1",
           "name": "بانادول",
-          "stockLevel": 150
+          "stockLevel": 150,
+          "price": 10
         },
         {
           "medicineId": "med_2",
           "name": "أوجمنتين",
-          "stockLevel": 45
+          "stockLevel": 45,
+          "price": 20
         },
         {
           "medicineId": "med_3",
@@ -240,6 +242,7 @@
           "stockLevel": 60
         }
       ],
+      
       "patientSearchMock": {
         "patient_1": {
           "patientName": "أحمد محمود",
