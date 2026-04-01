@@ -1,5 +1,4 @@
-import { promises as fs } from 'fs';
-import path from 'path';
+import data from '@/public/data/data.json';
 import { 
   Calendar, 
   MapPin, 
@@ -13,12 +12,7 @@ import {
   History
 } from 'lucide-react';
 
-export default async function PatientDashboard() {
-  // Fetch local data
-  const filePath = path.join(process.cwd(), 'public/data/data.json');
-  const fileContents = await fs.readFile(filePath, 'utf8');
-  const data = JSON.parse(fileContents);
-
+export default function PatientDashboard() {
   // Filter for Ahmed Mahmoud
   const patient = data.patients.find((p: any) => p.id === 'patient_1');
 
