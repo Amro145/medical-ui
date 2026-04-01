@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import data from "@/public/data/data.json";
-import { User, Clock, Calendar, CheckCircle2, ChevronLeft, Activity, Pill } from "lucide-react";
+import { User, Clock, Calendar, CheckCircle2, ChevronLeft, Activity, Pill, LogOut } from "lucide-react";
+import Link from "next/link";
 
 export default function DoctorDashboard() {
   const { doctor, patients } = data;
@@ -28,10 +29,14 @@ export default function DoctorDashboard() {
             </p>
           </div>
         </div>
-        <div className="text-left">
-          <p className="text-sm font-semibold text-slate-600 border px-3 py-1 bg-slate-50 rounded-full">
+        <div className="flex items-center gap-4">
+          <p className="hidden sm:block text-sm font-semibold text-slate-600 border px-3 py-1 bg-slate-50 rounded-full">
             لوحة تحكم الطبيب
           </p>
+          <Link href="/" className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg transition-colors">
+            <LogOut className="h-4 w-4" />
+            تسجيل الخروج
+          </Link>
         </div>
       </header>
 

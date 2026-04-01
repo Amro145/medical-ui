@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import data from "@/public/data/data.json";
-import { Search, Package, Pill, ArchiveRestore, ClipboardList, CheckCircle } from "lucide-react";
+import { Search, Package, Pill, ArchiveRestore, ClipboardList, CheckCircle, LogOut } from "lucide-react";
+import Link from "next/link";
 
 type PendingPrescription = {
   id: string;
@@ -78,10 +79,14 @@ export default function PharmacistDashboard() {
             </p>
           </div>
         </div>
-        <div className="text-left">
-          <p className="text-sm font-bold text-indigo-200 border border-indigo-500/50 px-3 py-1 bg-indigo-900/30 rounded-full tracking-wider">
+        <div className="flex items-center gap-4">
+          <p className="hidden sm:block text-sm font-bold text-indigo-200 border border-indigo-500/50 px-3 py-1 bg-indigo-900/30 rounded-full tracking-wider">
             نظام الصيدلية
           </p>
+          <Link href="/" className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-rose-400 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors border border-slate-700 hover:border-slate-600">
+            <LogOut className="h-4 w-4" />
+            تسجيل الخروج
+          </Link>
         </div>
       </header>
 

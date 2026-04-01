@@ -2,7 +2,8 @@
 
 import { useMemo, useState } from "react";
 import data from "@/public/data/data.json";
-import { Microscope, FlaskConical, FileText, Upload, CheckCircle2, AlertTriangle, FileSpreadsheet } from "lucide-react";
+import { Microscope, FlaskConical, FileText, Upload, CheckCircle2, AlertTriangle, FileSpreadsheet, LogOut } from "lucide-react";
+import Link from "next/link";
 
 type PendingTest = {
   id: string;
@@ -89,10 +90,14 @@ export default function LabDashboard() {
             </p>
           </div>
         </div>
-        <div className="text-left">
-          <p className="text-sm font-bold text-amber-700 border border-amber-200 px-4 py-1.5 bg-amber-50 rounded-full tracking-wider shadow-sm">
+        <div className="flex items-center gap-4">
+          <p className="hidden sm:block text-sm font-bold text-amber-700 border border-amber-200 px-4 py-1.5 bg-amber-50 rounded-full tracking-wider shadow-sm">
             نظام المختبر
           </p>
+          <Link href="/" className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg transition-colors border border-rose-100">
+            <LogOut className="h-4 w-4" />
+            تسجيل الخروج
+          </Link>
         </div>
       </header>
 

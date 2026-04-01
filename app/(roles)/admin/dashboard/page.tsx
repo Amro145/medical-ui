@@ -11,8 +11,10 @@ import {
   ShieldAlert,
   Clock,
   CheckCircle2,
-  PieChart
+  PieChart,
+  LogOut
 } from "lucide-react";
+import Link from "next/link";
 
 export default function AdminDashboard() {
   const { admin, deptManager } = data;
@@ -43,11 +45,15 @@ export default function AdminDashboard() {
             </p>
           </div>
         </div>
-        <div>
+        <div className="flex items-center gap-3">
           <button className="hidden sm:flex text-sm font-bold text-slate-800 border-2 border-slate-200 px-4 py-2 bg-white rounded-lg items-center gap-2 hover:bg-slate-50 transition-colors">
             <PieChart className="h-4 w-4" />
             تحميل تقرير اليوم
           </button>
+          <Link href="/" className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-rose-600 border-2 border-rose-100 bg-rose-50 hover:bg-rose-100 rounded-lg transition-colors">
+            <LogOut className="h-4 w-4" />
+            <span className="hidden sm:block">تسجيل الخروج</span>
+          </Link>
         </div>
       </header>
 
