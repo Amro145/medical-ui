@@ -1,197 +1,212 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import data from "@/public/data/data.json";
-import { 
-  Building, 
-  Users, 
-  Clock, 
-  Activity, 
-  PieChart, 
-  LogOut,
-  CalendarCheck,
-  Settings
-} from "lucide-react";
+import { User, LogOut, Loader2, Building, Edit, RefreshCw, X, CheckSquare } from "lucide-react";
 import Link from "next/link";
 
 export default function DeptManagerDashboard() {
-  const { deptManager } = data;
-  const { profile, department, doctorShiftTable, bookingOverview } = deptManager;
+  const { deptManager, doctor } = data; // Bringing in doctor to reassign their slots
 
-  const completionRateValue = parseInt(bookingOverview.completionRate.replace('%', ''));
+  const [loading, setLoading] = useState(true);
+  
+  // Local state for shift table
+  const [localShifts, setLocalShifts] = useState(deptManager.doctorShiftTable);
+  
+  // Local state for appointments to reassign
+  const [localAppointments, setLocalAppointments] = useState(doctor.schedule.bookedSlots);
+
+  // Modal states
+  const [isShiftModalOpen, setIsShiftModalOpen] = useState(false);
+  const [editingDoctorId, setEditingDoctorId] = useState<string | null>(null);
+  const [newShiftValue, setNewShiftValue] = useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="h-screen w-full flex items-center justify-center bg-slate-50">
+        <div className="flex flex-col items-center text-indigo-600">
+          <Loader2 className="h-10 w-10 animate-spin mb-4" />
+          <p className="font-bold">جاري تحميل البيانات...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const handleOpenShiftModal = (docId: string, currentShift: string) => {
+    setEditingDoctorId(docId);
+    setNewShiftValue(currentShift);
+    setIsShiftModalOpen(true);
+  };
+
+  const handleSaveShift = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingDoctorId || !newShiftValue.trim()) return;
+
+    setLocalShifts(prev => prev.map(d => {
+      if (d.doctorId === editingDoctorId) {
+        return { ...d, shift: newShiftValue };
+      }
+      return d;
+    }));
+
+    setIsShiftModalOpen(false);
+    setEditingDoctorId(null);
+  };
+
+  const handleReassign = (appointmentId: string) => {
+    const mockDoctorName = "د. ياسر المنصور (طبيب بديل)";
+    
+    // Visually moving it by updating doctor name
+    setLocalAppointments(prev => prev.map(app => {
+      if (app.id === appointmentId) {
+        return { ...app, reassignedTo: mockDoctorName };
+      }
+      return app;
+    }));
+    
+    alert(`تمت إحالة الموعد بنجاح إلى ${mockDoctorName}`);
+  };
 
   return (
     <div dir="rtl" className="min-h-screen bg-slate-50 text-slate-900 font-sans">
       {/* Header */}
-      <header className="bg-white border-b border-slate-200 px-6 py-5 flex items-center justify-between shadow-sm sticky top-0 z-10">
+      <header className="bg-white border-b border-indigo-100 px-6 py-4 flex items-center justify-between shadow-sm sticky top-0 z-10">
         <div className="flex items-center gap-4">
-          <div className="h-12 w-12 bg-sky-500 text-white rounded-xl flex items-center justify-center text-xl font-bold shadow-md">
+          <div className="h-12 w-12 bg-indigo-100 text-indigo-700 rounded-xl flex items-center justify-center text-xl font-bold">
             <Building className="h-6 w-6" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-slate-800">{profile.name}</h1>
-            <p className="text-slate-500 text-sm flex items-center gap-1 font-medium mt-0.5">
-              <Activity className="h-4 w-4 text-sky-500" />
-              مدير قسم: <span className="font-bold text-slate-700">{department}</span>
-            </p>
+            <h1 className="text-xl font-bold text-slate-800">{deptManager.department}</h1>
+            <p className="text-slate-500 text-sm font-bold mt-1">المدير: {deptManager.profile.name}</p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          <p className="hidden sm:block text-sm font-bold text-sky-700 border border-sky-200 px-4 py-1.5 bg-sky-50 rounded-full tracking-wider shadow-sm">
-            نظام إدارة الأقسام
+        <div className="flex items-center gap-4">
+          <p className="hidden sm:block text-sm font-semibold text-indigo-700 border border-indigo-200 px-4 py-1.5 bg-indigo-50 rounded-full">
+            لوحة تحكم إدارة الأقسام
           </p>
-          <Link href="/" className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-rose-500 hover:text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-100 rounded-lg transition-colors">
+          <Link href="/" className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg transition-colors border border-rose-100">
             <LogOut className="h-4 w-4" />
             <span className="hidden sm:inline">تسجيل الخروج</span>
           </Link>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <main className="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
         
-        {/* Left Column: Analytics */}
-        <div className="lg:col-span-4 flex flex-col gap-6">
-          {/* Total Appointments Card */}
-          <section className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex items-center gap-5">
-            <div className="h-16 w-16 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-100">
-              <CalendarCheck className="h-8 w-8" />
-            </div>
-            <div>
-              <p className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-1">إجمالي المواعيد اليوم</p>
-              <h2 className="text-3xl font-extrabold text-slate-800">{bookingOverview.totalSlots}</h2>
-            </div>
-          </section>
+        {/* Left Column: Shift Management */}
+        <section className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+          <div className="p-5 border-b border-slate-100 bg-indigo-50/50">
+             <h2 className="text-lg font-bold text-indigo-900 flex items-center gap-2">
+                <Edit className="h-5 w-5 text-indigo-600" />
+                إدارة مناوبات الأطباء
+             </h2>
+          </div>
+          <div className="p-4 flex flex-col gap-3">
+             {localShifts.map((shiftInfo, idx) => (
+                <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-slate-200 rounded-xl bg-white shadow-sm">
+                   <div className="mb-3 sm:mb-0">
+                      <p className="font-bold text-slate-800 text-md mb-1">{shiftInfo.doctorName}</p>
+                      <p className="text-xs font-bold text-indigo-600 bg-indigo-50 inline-block px-2 py-1 rounded-md border border-indigo-100">
+                        الوردية: {shiftInfo.shift}
+                      </p>
+                   </div>
+                   <button 
+                     onClick={() => handleOpenShiftModal(shiftInfo.doctorId, shiftInfo.shift)}
+                     className="px-4 py-2 bg-slate-100 text-slate-700 font-bold text-sm rounded-lg hover:bg-indigo-100 hover:text-indigo-700 transition-colors flex items-center justify-center gap-2"
+                   >
+                      تعديل الوردية
+                      <Edit className="h-4 w-4" />
+                   </button>
+                </div>
+             ))}
+          </div>
+        </section>
 
-          {/* Completion Rate Analytics */}
-          <section className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-            <div className="flex items-center justify-between mb-8">
-              <h3 className="font-bold text-slate-800 flex items-center gap-2">
-                <PieChart className="h-5 w-5 text-sky-500" />
-                معدل إنجاز المواعيد
-              </h3>
-            </div>
-            
-            <div className="flex justify-center items-center relative mb-4">
-              <svg className="w-40 h-40 transform -rotate-90">
-                <circle
-                  cx="80"
-                  cy="80"
-                  r="70"
-                  stroke="currentColor"
-                  strokeWidth="10"
-                  fill="transparent"
-                  className="text-slate-100"
-                />
-                <circle
-                  cx="80"
-                  cy="80"
-                  r="70"
-                  stroke="currentColor"
-                  strokeWidth="10"
-                  fill="transparent"
-                  strokeDasharray={440} // 2 * pi * r (r=70) doesn't exactly equal 440, close enough
-                  strokeDashoffset={440 - (440 * completionRateValue) / 100}
-                  className="text-sky-500"
-                  strokeLinecap="round"
-                />
-              </svg>
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-4xl font-extrabold text-slate-800">{bookingOverview.completionRate}</span>
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mt-1">مكتمل</span>
-              </div>
-            </div>
-
-            <div className="flex justify-around mt-6 pt-6 border-t border-slate-100 text-center">
-              <div>
-                <p className="text-xl font-bold text-emerald-600">{bookingOverview.bookedSlots}</p>
-                <p className="text-xs text-slate-500 font-bold">محجوزة</p>
-              </div>
-              <div className="w-px bg-slate-100"></div>
-              <div>
-                <p className="text-xl font-bold text-slate-400">{bookingOverview.availableSlots}</p>
-                <p className="text-xs text-slate-500 font-bold">متاحة</p>
-              </div>
-            </div>
-          </section>
-        </div>
-
-        {/* Right Column: Shift Management */}
-        <div className="lg:col-span-8">
-          <section className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden h-full">
-            <div className="p-6 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
-              <div>
-                <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-                  <Users className="h-5 w-5 text-indigo-500" />
-                  جدول مناوبات الأطباء
-                </h2>
-                <p className="text-sm text-slate-500 mt-1">إدارة مواعيد وحضور أطباء القسم</p>
-              </div>
-              <Activity className="h-8 w-8 text-slate-200" />
-            </div>
-
-            <div className="p-0">
-              <table className="w-full text-right">
-                <thead className="bg-white border-b border-slate-100">
-                  <tr>
-                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">الطبيب</th>
-                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">الوردية</th>
-                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">الحالة</th>
-                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">الإجراءات</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 bg-white">
-                  {doctorShiftTable.map((shift, idx) => {
-                    const isOnDuty = shift.shift.includes("صباحي") || shift.shift.includes("مسائي");
-                    return (
-                      <tr key={idx} className="hover:bg-slate-50/50 transition-colors group">
-                        <td className="px-6 py-5">
-                          <div className="flex items-center gap-3">
-                            <div className="h-10 w-10 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold border border-indigo-100">
-                              {shift.doctorName.replace('د. ', '').charAt(0)}
-                            </div>
-                            <div>
-                              <p className="font-bold text-slate-800">{shift.doctorName}</p>
-                              <p className="text-xs text-slate-400 font-medium mt-0.5">{shift.doctorId}</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-5">
-                          <div className="items-center gap-2 text-slate-600 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100 inline-flex">
-                            <Clock className="h-4 w-4 text-slate-400" />
-                            <span className="text-sm font-bold">{shift.shift}</span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-5 text-center">
-                          <span className={`inline-flex px-3 py-1 text-xs font-bold rounded-full border ${
-                            isOnDuty 
-                              ? "bg-emerald-50 text-emerald-600 border-emerald-100" 
-                              : "bg-amber-50 text-amber-600 border-amber-100"
-                          }`}>
-                            {isOnDuty ? "على رأس العمل" : "خارج المناوبة"}
-                          </span>
-                        </td>
-                        <td className="px-6 py-5 text-center">
-                          <button className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-700 text-sm font-bold rounded-lg hover:border-sky-300 hover:bg-sky-50 hover:text-sky-700 transition-all shadow-sm">
-                            <Settings className="h-4 w-4" />
-                            إدارة الجدول
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                  {doctorShiftTable.length === 0 && (
-                    <tr>
-                      <td colSpan={4} className="px-6 py-12 text-center text-slate-500 font-medium">
-                        لا يوجد أطباء مجدولين في هذا القسم.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </section>
-        </div>
+        {/* Right Column: Appointment Reassignments */}
+        <section className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+          <div className="p-5 border-b border-slate-100 bg-amber-50/50">
+             <h2 className="text-lg font-bold text-amber-900 flex items-center gap-2">
+                <RefreshCw className="h-5 w-5 text-amber-600" />
+                إحالة المواعيد (تغيير الطبيب)
+             </h2>
+          </div>
+          <div className="p-4 flex flex-col gap-3 max-h-[500px] overflow-y-auto">
+             {localAppointments.map(app => {
+                const isReassigned = 'reassignedTo' in app;
+                return (
+                   <div key={app.id} className={`flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-xl shadow-sm transition-all ${isReassigned ? 'border-emerald-200 bg-emerald-50/30' : 'border-slate-200 bg-white'}`}>
+                      <div className="mb-3 sm:mb-0 text-sm">
+                         <p className="font-bold text-slate-800 flex items-center gap-2">
+                           <User className="h-4 w-4" />
+                           {app.patientName}
+                         </p>
+                         <p className="text-slate-500 mt-1">تاريخ: {app.date} | الوقت: {app.time}</p>
+                         {isReassigned && (
+                            <p className="text-emerald-700 font-bold mt-2 text-xs flex items-center gap-1">
+                               <CheckSquare className="h-3 w-3" />
+                               تمت الإحالة إلى: {(app as any).reassignedTo}
+                            </p>
+                         )}
+                      </div>
+                      {!isReassigned ? (
+                         <button 
+                           onClick={() => handleReassign(app.id)}
+                           className="px-4 py-2 bg-amber-100 text-amber-700 font-bold text-sm rounded-lg hover:bg-amber-200 transition-colors flex items-center justify-center gap-2"
+                         >
+                            إحالة الموعد
+                            <RefreshCw className="h-4 w-4" />
+                         </button>
+                      ) : (
+                         <span className="px-4 py-2 bg-emerald-100 text-emerald-700 font-bold text-sm rounded-lg flex items-center justify-center">
+                            مُحال
+                         </span>
+                      )}
+                   </div>
+                );
+             })}
+          </div>
+        </section>
 
       </main>
+
+      {/* Edit Shift Modal */}
+      {isShiftModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+           <div className="bg-white rounded-2xl w-full max-w-sm shadow-xl animate-in zoom-in-95 duration-200">
+              <div className="border-b border-slate-100 px-6 py-4 flex items-center justify-between z-10">
+                 <h2 className="text-xl font-bold flex items-center gap-2">تعديل الوردية</h2>
+                 <button onClick={() => setIsShiftModalOpen(false)} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
+                    <X className="h-5 w-5 text-slate-500" />
+                 </button>
+              </div>
+              <div className="p-6">
+                 <form onSubmit={handleSaveShift} className="flex flex-col gap-4">
+                    <label className="text-sm font-bold text-slate-700">اختر الوردية الجديدة:</label>
+                    <select 
+                      value={newShiftValue}
+                      onChange={(e) => setNewShiftValue(e.target.value)}
+                      className="px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none w-full bg-white"
+                      required
+                    >
+                       <option value="صباحي (08:00 - 16:00)">صباحي (08:00 - 16:00)</option>
+                       <option value="مسائي (16:00 - 00:00)">مسائي (16:00 - 00:00)</option>
+                       <option value="ليلي (00:00 - 08:00)">ليلي (00:00 - 08:00)</option>
+                    </select>
+                    <div className="flex gap-2 mt-2">
+                       <button type="submit" className="flex-1 py-3 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700">حفظ التعديل</button>
+                       <button type="button" onClick={() => setIsShiftModalOpen(false)} className="px-4 py-3 bg-slate-100 text-slate-700 font-bold rounded-lg hover:bg-slate-200">إلغاء</button>
+                    </div>
+                 </form>
+              </div>
+           </div>
+        </div>
+      )}
+
     </div>
   );
 }

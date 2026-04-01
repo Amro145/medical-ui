@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import data from "@/public/data/data.json";
-import { Search, Package, Pill, ArchiveRestore, ClipboardList, CheckCircle, LogOut } from "lucide-react";
+import { Search, Package, Pill, ArchiveRestore, ClipboardList, CheckCircle, LogOut, Loader2 } from "lucide-react";
 import Link from "next/link";
 
 type PendingPrescription = {
@@ -24,9 +24,30 @@ export default function PharmacistDashboard() {
   const { pharmacist, patients } = data;
   const initPatientMock = pharmacist.patientSearchMock as any;
 
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchedPatientId, setSearchedPatientId] = useState<string | null>(null);
+  
+  // Local States for reactivity
   const [localSearchMock, setLocalSearchMock] = useState(initPatientMock);
+  const [localInventory, setLocalInventory] = useState(pharmacist.inventory);
+  const [successMessage, setSuccessMessage] = useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="h-screen w-full flex items-center justify-center bg-slate-50">
+        <div className="flex flex-col items-center text-indigo-600">
+          <Loader2 className="h-10 w-10 animate-spin mb-4" />
+          <p className="font-bold">جاري تحميل البيانات...</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,6 +78,7 @@ export default function PharmacistDashboard() {
   };
 
   const handleDispense = (patientId: string, prescription: PendingPrescription) => {
+    // 1. Update Patient Record (move pending to history)
     setLocalSearchMock((prev: any) => {
       const patientData = prev[patientId];
       if (!patientData) return prev;
@@ -78,12 +100,32 @@ export default function PharmacistDashboard() {
         }
       };
     });
+
+    // 2. Decrement Inventory visually
+    setLocalInventory(prev => prev.map(item => {
+      if (item.medicineId === prescription.medicineId) {
+        return { ...item, stockLevel: item.stockLevel > 0 ? item.stockLevel - 1 : 0 };
+      }
+      return item;
+    }));
+
+    // 3. Show Success message
+    setSuccessMessage(`تم صرف الدواء: ${prescription.name} بنجاح!`);
+    setTimeout(() => setSuccessMessage(""), 3000);
   };
 
   const currentPatientData = searchedPatientId ? localSearchMock[searchedPatientId] : null;
 
   return (
-    <div dir="rtl" className="min-h-screen bg-slate-50 text-slate-900 font-sans">
+    <div dir="rtl" className="min-h-screen bg-slate-50 text-slate-900 font-sans relative">
+      {/* Toast Notification */}
+      {successMessage && (
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 bg-emerald-600 text-white px-6 py-3 rounded-full shadow-lg font-bold flex items-center gap-2 animate-in slide-in-from-top-4">
+          <CheckCircle className="h-5 w-5" />
+          {successMessage}
+        </div>
+      )}
+
       {/* Header */}
       <header className="bg-slate-900 border-b border-slate-700 px-6 py-4 flex items-center justify-between shadow-md sticky top-0 z-10 text-white">
         <div className="flex items-center gap-4">
@@ -104,7 +146,7 @@ export default function PharmacistDashboard() {
           </p>
           <Link href="/" className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-rose-400 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors border border-slate-700 hover:border-slate-600">
             <LogOut className="h-4 w-4" />
-            تسجيل الخروج
+            <span className="hidden sm:block">تسجيل الخروج</span>
           </Link>
         </div>
       </header>
@@ -152,14 +194,14 @@ export default function PharmacistDashboard() {
                     {currentPatientData.pending.length > 0 ? (
                       <div className="space-y-3">
                         {currentPatientData.pending.map((med: any) => (
-                          <div key={med.id} className="flex items-center justify-between p-4 bg-amber-50 rounded-xl border border-amber-100 shadow-sm">
+                          <div key={med.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-amber-50 rounded-xl border border-amber-100 shadow-sm gap-4">
                             <div>
                                <h5 className="font-bold text-amber-900 text-lg">{med.name}</h5>
                                <p className="text-amber-700 text-sm mt-1">{med.dosage} - المدة: {med.duration}</p>
                             </div>
                             <button 
                               onClick={() => handleDispense(searchedPatientId, med)}
-                              className="px-5 py-2.5 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 shadow-sm transition-all flex items-center gap-2"
+                              className="px-5 py-2.5 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 shadow-sm transition-all flex items-center justify-center gap-2 shrink-0"
                             >
                               صرف الدواء
                               <CheckCircle className="h-4 w-4" />
@@ -179,7 +221,7 @@ export default function PharmacistDashboard() {
                       سجل الأدوية المصروفة
                     </h4>
                     {currentPatientData.history.length > 0 ? (
-                      <div className="space-y-2 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-200 before:to-transparent">
+                      <div className="space-y-2 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-linear-to-b before:from-transparent before:via-slate-200 before:to-transparent">
                         {currentPatientData.history.map((med: any) => (
                            <div key={med.id} className="relative flex items-center p-3 bg-white border border-slate-200 rounded-lg shadow-sm">
                               <div className="w-full">
@@ -196,10 +238,10 @@ export default function PharmacistDashboard() {
                 </div>
               </div>
             </div>
-          ) : searchedPatientId === null ? (
+          ) : searchedPatientId === null && searchTerm !== "" ? (
             <div className="bg-red-50 text-red-700 p-4 rounded-xl shadow-sm border border-red-100 flex items-center gap-3">
                <Package className="h-5 w-5" />
-               <p className="font-bold">لم يتم العثور على مريض بهذا الرقم.</p>
+               <p className="font-bold">لم يتم العثور على مريض بهذا الرقم أو الاسم.</p>
             </div>
           ) : null}
         </div>
@@ -223,12 +265,12 @@ export default function PharmacistDashboard() {
                    </tr>
                  </thead>
                  <tbody className="divide-y divide-slate-50">
-                   {pharmacist.inventory.map((item) => (
+                   {localInventory.map((item) => (
                      <tr key={item.medicineId} className="hover:bg-slate-50 transition-colors">
                        <td className="px-5 py-4 font-bold text-slate-800">{item.name}</td>
                        <td className="px-5 py-4 text-xs text-slate-500 font-mono">{item.medicineId}</td>
                        <td className="px-5 py-4 text-center">
-                         <span className={`inline-flex items-center justify-center px-3 py-1 rounded-full text-sm font-bold ${
+                         <span className={`inline-flex items-center justify-center px-3 py-1 rounded-full text-sm font-bold transition-colors ${
                            item.stockLevel < 50 ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700'
                          }`}>
                            {item.stockLevel}

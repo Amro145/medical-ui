@@ -1,17 +1,147 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import data from "@/public/data/data.json";
-import { User, Clock, Calendar, CheckCircle2, ChevronLeft, Activity, Pill, LogOut } from "lucide-react";
+import { User, Clock, Calendar, CheckCircle2, ChevronLeft, Activity, Pill, LogOut, FilePlus, Microscope, Loader2, X } from "lucide-react";
 import Link from "next/link";
 
 export default function DoctorDashboard() {
-  const { doctor, patients } = data;
+  const { doctor, patients, labTech } = data;
   const today = "2026-04-10";
 
+  const [loading, setLoading] = useState(true);
+  const [localPatients, setLocalPatients] = useState(patients);
   const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
 
-  const selectedPatient = patients.find((p) => p.id === selectedPatientId);
+  // Modal State
+  const [isManageModalOpen, setIsManageModalOpen] = useState(false);
+  const [managingPatientId, setManagingPatientId] = useState<string | null>(null);
+  
+  // Form States
+  const [newDiagnosis, setNewDiagnosis] = useState("");
+  const [newMedName, setNewMedName] = useState("");
+  const [newMedDosage, setNewMedDosage] = useState("");
+  const [newMedDuration, setNewMedDuration] = useState("");
+  const [selectedTestId, setSelectedTestId] = useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 600);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="h-screen w-full flex items-center justify-center bg-slate-50">
+        <div className="flex flex-col items-center text-blue-600">
+          <Loader2 className="h-10 w-10 animate-spin mb-4" />
+          <p className="font-bold">جاري تحميل البيانات...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const selectedPatient = localPatients.find((p) => p.id === selectedPatientId);
+  const managingPatient = localPatients.find((p) => p.id === managingPatientId);
+
+  const handleOpenManageModal = (patientId: string) => {
+    setManagingPatientId(patientId);
+    setIsManageModalOpen(true);
+  };
+
+  const closeManageModal = () => {
+    setIsManageModalOpen(false);
+    setManagingPatientId(null);
+    setNewDiagnosis("");
+    setNewMedName("");
+    setNewMedDosage("");
+    setNewMedDuration("");
+    setSelectedTestId("");
+  };
+
+  const handleAddDiagnosis = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newDiagnosis.trim() || !managingPatientId) return;
+
+    setLocalPatients(prev => prev.map(p => {
+      if (p.id === managingPatientId) {
+        return {
+          ...p,
+          medicalHistory: [
+            ...p.medicalHistory,
+            {
+              id: `hist_${Date.now()}`,
+              diagnosis: newDiagnosis,
+              date: new Date().toISOString().split('T')[0],
+              doctorId: doctor.id,
+              doctorName: doctor.profile.name
+            }
+          ]
+        };
+      }
+      return p;
+    }));
+    setNewDiagnosis("");
+  };
+
+  const handleAddMedication = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newMedName.trim() || !managingPatientId) return;
+
+    setLocalPatients(prev => prev.map(p => {
+      if (p.id === managingPatientId) {
+        return {
+          ...p,
+          medications: {
+            ...p.medications,
+            toBeDispensed: [
+              ...p.medications.toBeDispensed,
+              {
+                id: `pres_${Date.now()}`,
+                medicineId: `m_${Date.now()}`, // mock id
+                name: newMedName,
+                dosage: newMedDosage,
+                duration: newMedDuration
+              }
+            ]
+          }
+        };
+      }
+      return p;
+    }));
+    setNewMedName("");
+    setNewMedDosage("");
+    setNewMedDuration("");
+  };
+
+  const handleRequestTest = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedTestId || !managingPatientId) return;
+
+    const testInfo = labTech.testCatalog.find(t => t.testId === selectedTestId);
+    if (!testInfo) return;
+
+    setLocalPatients(prev => prev.map(p => {
+      if (p.id === managingPatientId) {
+        return {
+          ...p,
+          labTests: {
+            ...p.labTests,
+            required: [
+              ...p.labTests.required,
+              {
+                id: `test_req_${Date.now()}`,
+                testId: testInfo.testId,
+                testName: testInfo.name,
+                priority: "عادي"
+              }
+            ]
+          }
+        };
+      }
+      return p;
+    }));
+    setSelectedTestId("");
+  };
 
   return (
     <div dir="rtl" className="min-h-screen bg-slate-50 text-slate-900 font-sans">
@@ -57,13 +187,13 @@ export default function DoctorDashboard() {
                 return (
                   <div 
                     key={slot.id} 
-                    className={`flex items-center justify-between p-4 rounded-xl border transition-all ${
+                    className={`flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border transition-all ${
                       isToday 
                         ? 'border-blue-200 bg-blue-50/50 shadow-sm' 
                         : 'border-slate-100 bg-slate-50 hover:border-slate-300'
                     }`}
                   >
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4 mb-4 sm:mb-0">
                       <div className={`flex flex-col items-center justify-center p-3 rounded-lg ${isToday ? 'bg-blue-600 text-white' : 'bg-white border text-slate-700'}`}>
                         <Clock className="h-5 w-5 mb-1" />
                         <span className="font-bold text-sm">{slot.time}</span>
@@ -81,13 +211,22 @@ export default function DoctorDashboard() {
                         <p className="text-slate-500 text-sm text-right mt-1">{slot.date}</p>
                       </div>
                     </div>
-                    <button 
-                      onClick={() => setSelectedPatientId(slot.patientId)}
-                      className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors shadow-sm flex items-center gap-2"
-                    >
-                      عرض الملف
-                      <ChevronLeft className="h-4 w-4" />
-                    </button>
+                    <div className="flex gap-2">
+                      <button 
+                        onClick={() => handleOpenManageModal(slot.patientId)}
+                        className="flex-1 sm:flex-none px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 transition-colors shadow-sm flex items-center justify-center gap-2"
+                      >
+                        <FilePlus className="h-4 w-4" />
+                        إدارة المريض
+                      </button>
+                      <button 
+                        onClick={() => setSelectedPatientId(slot.patientId)}
+                        className="flex-1 sm:flex-none px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors shadow-sm flex items-center justify-center gap-2"
+                      >
+                        عرض الملف
+                        <ChevronLeft className="h-4 w-4" />
+                      </button>
+                    </div>
                   </div>
                 );
               })}
@@ -115,7 +254,7 @@ export default function DoctorDashboard() {
 
         </div>
 
-        {/* Right Column - Patient Quick Access Modal / Sidebar */}
+        {/* Right Column - Patient Quick Access Sidebar */}
         <div className="lg:col-span-4">
           <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sticky top-24 min-h-[400px]">
             {selectedPatient ? (
@@ -186,6 +325,26 @@ export default function DoctorDashboard() {
                       )}
                     </div>
                   </div>
+                  
+                  {/* Lab Tests Required */}
+                  <div>
+                    <h4 className="text-sm font-bold flex items-center gap-2 text-slate-700 mb-3">
+                      <Microscope className="h-4 w-4" />
+                      التحاليل المطلوبة (معلقة)
+                    </h4>
+                    {selectedPatient.labTests.required.length > 0 ? (
+                      <ul className="space-y-2">
+                        {selectedPatient.labTests.required.map((test) => (
+                           <li key={test.id} className="text-sm p-3 bg-white border border-slate-200 rounded-lg flex justify-between items-center">
+                              <span className="font-bold text-slate-800">{test.testName}</span>
+                              <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full">{test.priority}</span>
+                           </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-sm text-slate-500">لا توجد تحاليل معلقة</p>
+                    )}
+                  </div>
                 </div>
               </div>
             ) : (
@@ -198,6 +357,105 @@ export default function DoctorDashboard() {
         </div>
 
       </main>
+
+      {/* MANAGE PATIENT MODAL */}
+      {isManageModalOpen && managingPatient && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+           <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl animate-in zoom-in-95 duration-200">
+              <div className="sticky top-0 bg-white border-b border-slate-100 px-6 py-4 flex items-center justify-between z-10">
+                 <h2 className="text-xl font-bold flex items-center gap-2">
+                   إدارة بيانات المريض: <span className="text-blue-600">{managingPatient.profile.name}</span>
+                 </h2>
+                 <button onClick={closeManageModal} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
+                    <X className="h-5 w-5 text-slate-500" />
+                 </button>
+              </div>
+              
+              <div className="p-6 space-y-8">
+                 
+                 {/* Add Diagnosis */}
+                 <section className="bg-slate-50 p-5 rounded-xl border border-slate-100">
+                    <h3 className="font-bold text-slate-800 mb-3 flex items-center gap-2">
+                       <Activity className="h-4 w-4 text-blue-500" />
+                       إضافة تشخيص جديد
+                    </h3>
+                    <form onSubmit={handleAddDiagnosis} className="flex gap-2">
+                       <input 
+                         type="text" 
+                         value={newDiagnosis}
+                         onChange={(e) => setNewDiagnosis(e.target.value)}
+                         placeholder="أدخل التشخيص..." 
+                         className="flex-1 px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                         required
+                       />
+                       <button type="submit" className="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700">إضافة</button>
+                    </form>
+                 </section>
+
+                 {/* Add Medication */}
+                 <section className="bg-slate-50 p-5 rounded-xl border border-slate-100">
+                    <h3 className="font-bold text-slate-800 mb-3 flex items-center gap-2">
+                       <Pill className="h-4 w-4 text-amber-500" />
+                       وصف دواء جديد (للصرف)
+                    </h3>
+                    <form onSubmit={handleAddMedication} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                       <input 
+                         type="text" 
+                         value={newMedName}
+                         onChange={(e) => setNewMedName(e.target.value)}
+                         placeholder="اسم الدواء..." 
+                         className="px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none sm:col-span-2"
+                         required
+                       />
+                       <input 
+                         type="text" 
+                         value={newMedDosage}
+                         onChange={(e) => setNewMedDosage(e.target.value)}
+                         placeholder="الجرعة (مثال: مرتين يومياً)" 
+                         className="px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none"
+                         required
+                       />
+                       <input 
+                         type="text" 
+                         value={newMedDuration}
+                         onChange={(e) => setNewMedDuration(e.target.value)}
+                         placeholder="المدة (مثال: 5 أيام)" 
+                         className="px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none"
+                         required
+                       />
+                       <div className="sm:col-span-2 flex justify-end">
+                         <button type="submit" className="px-6 py-2 bg-amber-500 text-white font-bold rounded-lg hover:bg-amber-600">وصف دواء</button>
+                       </div>
+                    </form>
+                 </section>
+
+                 {/* Request Lab Test */}
+                 <section className="bg-slate-50 p-5 rounded-xl border border-slate-100">
+                    <h3 className="font-bold text-slate-800 mb-3 flex items-center gap-2">
+                       <Microscope className="h-4 w-4 text-rose-500" />
+                       طلب تحليل مختبري
+                    </h3>
+                    <form onSubmit={handleRequestTest} className="flex gap-2">
+                       <select 
+                         value={selectedTestId}
+                         onChange={(e) => setSelectedTestId(e.target.value)}
+                         className="flex-1 px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-rose-500 outline-none bg-white"
+                         required
+                       >
+                         <option value="" disabled>اختر التحليل...</option>
+                         {labTech.testCatalog.map(test => (
+                            <option key={test.testId} value={test.testId}>{test.name}</option>
+                         ))}
+                       </select>
+                       <button type="submit" className="px-4 py-2 bg-rose-600 text-white font-bold rounded-lg hover:bg-rose-700">طلب</button>
+                    </form>
+                 </section>
+
+              </div>
+           </div>
+        </div>
+      )}
+
     </div>
   );
 }

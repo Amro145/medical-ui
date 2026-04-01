@@ -26,7 +26,7 @@ export default function AdminDashboard() {
   return (
     <div dir="rtl" className="min-h-screen bg-[#f8f9fc] text-slate-900 font-sans">
       {/* Top Banner indicating Management Only */}
-      <div className="bg-gradient-to-r from-slate-900 to-slate-800 text-white text-center py-2 text-sm font-bold flex items-center justify-center gap-2">
+      <div className="bg-linear-to-r from-slate-900 to-slate-800 text-white text-center py-2 text-sm font-bold flex items-center justify-center gap-2">
         <ShieldAlert className="h-4 w-4 text-rose-500" />
         هذه الصفحة مخصصة للإدارة العليا فقط
       </div>
