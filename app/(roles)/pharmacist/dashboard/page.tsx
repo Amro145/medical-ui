@@ -21,7 +21,7 @@ type HistoryPrescription = {
 };
 
 export default function PharmacistDashboard() {
-  const { pharmacist } = data;
+  const { pharmacist, patients } = data;
   const initPatientMock = pharmacist.patientSearchMock as any;
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -30,8 +30,27 @@ export default function PharmacistDashboard() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (localSearchMock[searchTerm]) {
-      setSearchedPatientId(searchTerm);
+    
+    if (!searchTerm.trim()) {
+      setSearchedPatientId(null);
+      return;
+    }
+
+    const term = searchTerm.trim().toLowerCase();
+
+    if (localSearchMock[term]) {
+      setSearchedPatientId(term);
+      return;
+    }
+
+    const matchedPatient = patients?.find((p: any) => 
+      p.id.toLowerCase() === term || 
+      p.profile.name.toLowerCase().includes(term) || 
+      p.profile.phone.includes(term)
+    );
+
+    if (matchedPatient && localSearchMock[matchedPatient.id]) {
+      setSearchedPatientId(matchedPatient.id);
     } else {
       setSearchedPatientId(null);
     }
@@ -102,7 +121,7 @@ export default function PharmacistDashboard() {
             <form onSubmit={handleSearch} className="flex gap-3">
               <input 
                 type="text" 
-                placeholder="أدخل رقم هوية المريض (مثل: patient_1)"
+                placeholder="أدخل رقم الهوية، الاسم، أو الجوال..."
                 className="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all text-slate-700"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}

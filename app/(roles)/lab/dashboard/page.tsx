@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import data from "@/public/data/data.json";
-import { Microscope, FlaskConical, FileText, Upload, CheckCircle2, AlertTriangle, FileSpreadsheet, LogOut } from "lucide-react";
+import { Microscope, FlaskConical, FileText, Upload, CheckCircle2, AlertTriangle, FileSpreadsheet, LogOut, Search } from "lucide-react";
 import Link from "next/link";
 
 type PendingTest = {
@@ -25,9 +25,22 @@ type HistoryTest = {
 };
 
 export default function LabDashboard() {
-  const { labTech } = data;
+  const { labTech, patients } = data;
 
   const [localRecords, setLocalRecords] = useState(labTech.patientRecordAccess);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const matchedPatientIds = useMemo(() => {
+    if (!searchTerm.trim()) return null;
+    const term = searchTerm.trim().toLowerCase();
+    return patients
+      .filter((p: any) => 
+        p.id.toLowerCase() === term || 
+        p.profile.name.toLowerCase().includes(term) || 
+        p.profile.phone.includes(term)
+      )
+      .map((p: any) => p.id);
+  }, [searchTerm, patients]);
 
   // Flatten pending and history requests from all patients
   const { allPending, allHistory } = useMemo(() => {
@@ -35,6 +48,10 @@ export default function LabDashboard() {
     let history: HistoryTest[] = [];
 
     Object.entries(localRecords).forEach(([patientId, record]: [string, any]) => {
+      if (matchedPatientIds && !matchedPatientIds.includes(patientId)) {
+        return;
+      }
+
       record.pending.forEach((test: any) => {
         pending.push({ ...test, patientName: record.patientName, patientId });
       });
@@ -44,7 +61,7 @@ export default function LabDashboard() {
     });
 
     return { allPending: pending, allHistory: history };
-  }, [localRecords]);
+  }, [localRecords, matchedPatientIds]);
 
   // Simulate uploading results
   const handleUploadResults = (test: PendingTest) => {
@@ -106,6 +123,23 @@ export default function LabDashboard() {
         {/* Right Section / Main Area */}
         <div className="lg:col-span-8 flex flex-col gap-8">
           
+          {/* Search Bar */}
+          <section className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+            <h2 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+               <Search className="h-5 w-5 text-amber-600" />
+               بحث متقدم للطلبات
+            </h2>
+            <div className="flex gap-3">
+              <input 
+                type="text" 
+                placeholder="ابحث برقم الهوية، اسم المريض، أو الجوال..."
+                className="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all text-slate-700 font-medium"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+          </section>
+
           {/* Pending Requests */}
           <section className="bg-white rounded-2xl shadow-[0_4px_20px_-10px_rgba(0,0,0,0.1)] border border-blue-100 overflow-hidden">
             <div className="p-5 border-b border-blue-50 bg-gradient-to-l from-blue-50 to-white flex items-center justify-between">
