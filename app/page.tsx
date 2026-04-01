@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { User, Stethoscope, Pill, Microscope } from 'lucide-react';
+import { User, Stethoscope, Pill, Microscope, Building, Users } from 'lucide-react';
 
 export default function Home() {
   const roles = [
@@ -34,14 +34,34 @@ export default function Home() {
       iconColor: 'text-purple-600'
     },
     {
-      title: 'فحص طبي',
-      description: 'بوابة إدارة التحاليل والمختبر',
+      title: 'مختبر',
+      description: 'بوابة إدارة التحاليل والنتائج',
       icon: Microscope,
       href: '/lab/dashboard',
       color: 'bg-amber-500',
       hoverColor: 'hover:bg-amber-600',
       lightColor: 'bg-amber-50',
       iconColor: 'text-amber-600'
+    },
+    {
+      title: 'مدير قسم',
+      description: 'بوابة إدارة الطاقم والمناوبات',
+      icon: Users,
+      href: '/dept-manager/dashboard',
+      color: 'bg-indigo-600',
+      hoverColor: 'hover:bg-indigo-700',
+      lightColor: 'bg-indigo-50',
+      iconColor: 'text-indigo-600'
+    },
+    {
+      title: 'مدير مستشفى',
+      description: 'بوابة الإدارة العليا والإحصائيات',
+      icon: Building,
+      href: '/admin/dashboard',
+      color: 'bg-slate-800',
+      hoverColor: 'hover:bg-slate-900',
+      lightColor: 'bg-slate-100',
+      iconColor: 'text-slate-800'
     }
   ];
 
