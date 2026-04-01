@@ -10,7 +10,7 @@ export default function DoctorDashboard() {
   const today = "2026-04-10";
 
   const [loading, setLoading] = useState(true);
-  const [localPatients, setLocalPatients] = useState(patients);
+  const [localPatients, setLocalPatients] = useState<any[]>(patients);
   const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
 
   // Modal State
@@ -291,7 +291,7 @@ export default function DoctorDashboard() {
                     </h4>
                     {selectedPatient.medicalHistory.length > 0 ? (
                       <ul className="space-y-3">
-                        {selectedPatient.medicalHistory.map((hist) => (
+                        {selectedPatient.medicalHistory.map((hist: any) => (
                           <li key={hist.id} className="text-sm p-3 bg-slate-50 rounded-lg border border-slate-100 relative pl-4 border-r-2 border-r-blue-400">
                             <p className="font-bold text-slate-800">{hist.diagnosis}</p>
                             <p className="text-slate-500 text-xs mt-1">{hist.date}</p>
@@ -310,8 +310,12 @@ export default function DoctorDashboard() {
                       الأدوية الحالية
                     </h4>
                     <div className="space-y-2">
-                      {[...selectedPatient.medications.toBeDispensed, ...selectedPatient.medications.alreadyDispensed].length > 0 ? (
-                        [...selectedPatient.medications.toBeDispensed, ...selectedPatient.medications.alreadyDispensed].map((med, i) => (
+                      {(() => {
+                        const allMeds = [...selectedPatient.medications.toBeDispensed, ...(selectedPatient.medications.alreadyDispensed || [])];
+                        if (allMeds.length === 0) {
+                          return <p className="text-sm text-slate-500">لا يوجد أدوية حالية</p>;
+                        }
+                        return allMeds.map((med: any, i: number) => (
                            <div key={i} className="text-sm p-3 bg-white border border-slate-200 rounded-lg flex justify-between items-center">
                               <div>
                                 <p className="font-bold text-slate-800">{med.name}</p>
@@ -319,10 +323,8 @@ export default function DoctorDashboard() {
                                 {('date' in med) && <p className="text-slate-500 text-xs mt-1">صُرف في {med.date}</p>}
                               </div>
                            </div>
-                        ))
-                      ) : (
-                         <p className="text-sm text-slate-500">لا يوجد أدوية حالية</p>
-                      )}
+                        ));
+                      })()}
                     </div>
                   </div>
                   
@@ -334,7 +336,7 @@ export default function DoctorDashboard() {
                     </h4>
                     {selectedPatient.labTests.required.length > 0 ? (
                       <ul className="space-y-2">
-                        {selectedPatient.labTests.required.map((test) => (
+                        {selectedPatient.labTests.required.map((test: any) => (
                            <li key={test.id} className="text-sm p-3 bg-white border border-slate-200 rounded-lg flex justify-between items-center">
                               <span className="font-bold text-slate-800">{test.testName}</span>
                               <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full">{test.priority}</span>
