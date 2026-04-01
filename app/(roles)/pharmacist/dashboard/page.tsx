@@ -196,7 +196,7 @@ export default function PharmacistDashboard() {
                 </div>
               </div>
             </div>
-          ) : searchedPatientId === null && searchTerm !== "" ? (
+          ) : searchedPatientId === null ? (
             <div className="bg-red-50 text-red-700 p-4 rounded-xl shadow-sm border border-red-100 flex items-center gap-3">
                <Package className="h-5 w-5" />
                <p className="font-bold">لم يتم العثور على مريض بهذا الرقم.</p>
