@@ -1,290 +1,123 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import data from "@/public/data/data.json";
-import { User, LogOut, Loader2, Building, Edit, RefreshCw, X, CheckSquare, UserPlus } from "lucide-react";
-import Link from "next/link";
+import React from 'react';
+import { useMedicalData } from '@/hooks/useMedicalData';
+import { Card, CardHeader, CardTitle } from '@/components/ui/card';
+import { Table, Thead, Tbody, Tr, Th, Td } from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import { Users, CalendarCheck, Clock, UserCog } from 'lucide-react';
 
 export default function DeptManagerDashboard() {
-  const { deptManager, doctor } = data; // Bringing in doctor to reassign their slots
-
-  const [loading, setLoading] = useState(true);
-  
-  // Local state for shift table
-  const [localShifts, setLocalShifts] = useState(deptManager.doctorShiftTable);
-  
-  // Local state for appointments to reassign
-  const [localAppointments, setLocalAppointments] = useState(doctor.schedule.bookedSlots);
-
-  // Modal states
-  const [isShiftModalOpen, setIsShiftModalOpen] = useState(false);
-  const [editingDoctorId, setEditingDoctorId] = useState<string | null>(null);
-  const [newShiftValue, setNewShiftValue] = useState("");
-
-  const [isAddDoctorModalOpen, setIsAddDoctorModalOpen] = useState(false);
-  const [newDoctorName, setNewDoctorName] = useState("");
-  const [newDoctorShift, setNewDoctorShift] = useState("صباحي (08:00 - 16:00)");
-
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 500);
-    return () => clearTimeout(timer);
-  }, []);
+  const { data, loading, error } = useMedicalData();
 
   if (loading) {
     return (
-      <div className="h-screen w-full flex items-center justify-center bg-slate-50">
-        <div className="flex flex-col items-center text-indigo-600">
-          <Loader2 className="h-10 w-10 animate-spin mb-4" />
-          <p className="font-bold">جاري تحميل البيانات...</p>
-        </div>
+      <div className="flex items-center justify-center p-12">
+         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
       </div>
     );
   }
 
-  const handleOpenShiftModal = (docId: string, currentShift: string) => {
-    setEditingDoctorId(docId);
-    setNewShiftValue(currentShift);
-    setIsShiftModalOpen(true);
-  };
+  if (error || !data) {
+    return <div className="text-rose-500 font-bold text-center p-8">عذراً، حدث خطأ: {error}</div>;
+  }
 
-  const handleSaveShift = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingDoctorId || !newShiftValue.trim()) return;
-
-    setLocalShifts(prev => prev.map(d => {
-      if (d.doctorId === editingDoctorId) {
-        return { ...d, shift: newShiftValue };
-      }
-      return d;
-    }));
-
-    setIsShiftModalOpen(false);
-    setEditingDoctorId(null);
-  };
-
-  const handleAddDoctor = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newDoctorName.trim()) return;
-
-    setLocalShifts(prev => [
-      ...prev,
-      {
-        doctorId: `doc_${Date.now()}`,
-        doctorName: newDoctorName,
-        shift: newDoctorShift
-      }
-    ]);
-
-    setIsAddDoctorModalOpen(false);
-    setNewDoctorName("");
-    setNewDoctorShift("صباحي (08:00 - 16:00)");
-  };
-
-  const handleReassign = (appointmentId: string) => {
-    const mockDoctorName = "د. ياسر المنصور (طبيب بديل)";
-    
-    // Visually moving it by updating doctor name
-    setLocalAppointments(prev => prev.map(app => {
-      if (app.id === appointmentId) {
-        return { ...app, reassignedTo: mockDoctorName };
-      }
-      return app;
-    }));
-    
-    alert(`تمت إحالة الموعد بنجاح إلى ${mockDoctorName}`);
-  };
+  const { department, bookingOverview, doctorShiftTable } = data.deptManager;
 
   return (
-    <div dir="rtl" className="min-h-screen bg-slate-50 text-slate-900 font-sans">
-      {/* Header */}
-      <header className="bg-white border-b border-indigo-100 px-6 py-4 flex items-center justify-between shadow-sm sticky top-0 z-10">
-        <div className="flex items-center gap-4">
-          <div className="h-12 w-12 bg-indigo-100 text-indigo-700 rounded-xl flex items-center justify-center text-xl font-bold">
-            <Building className="h-6 w-6" />
-          </div>
-          <div>
-            <h1 className="text-xl font-bold text-slate-800">{deptManager.department}</h1>
-            <p className="text-slate-500 text-sm font-bold mt-1">المدير: {deptManager.profile.name}</p>
-          </div>
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+        <div>
+          <h2 className="text-3xl font-extrabold text-slate-800 mb-1">نظرة عامة على القسم</h2>
+          <p className="text-indigo-600 font-semibold">{department} | اشراف: {data.deptManager.profile.name}</p>
         </div>
-        <div className="flex items-center gap-4">
-          <p className="hidden sm:block text-sm font-semibold text-indigo-700 border border-indigo-200 px-4 py-1.5 bg-indigo-50 rounded-full">
-            لوحة تحكم إدارة الأقسام
-          </p>
-          <Link href="/" className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg transition-colors border border-rose-100">
-            <LogOut className="h-4 w-4" />
-            <span className="hidden sm:inline">تسجيل الخروج</span>
-          </Link>
-        </div>
-      </header>
+        <Button variant="primary" className="bg-indigo-600 hover:bg-indigo-700 gap-2">
+           <UserCog className="w-4 h-4" />
+           إدارة المناوبات
+        </Button>
+      </div>
 
-      <main className="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card>
+          <div className="flex gap-4 items-center">
+             <div className="p-4 bg-slate-100 text-slate-600 rounded-xl">
+               <CalendarCheck className="w-8 h-8" />
+             </div>
+             <div>
+               <p className="text-slate-500 font-medium text-sm">إجمالي المواعيد</p>
+               <h4 className="text-2xl font-bold text-slate-800">{bookingOverview.totalSlots}</h4>
+             </div>
+          </div>
+        </Card>
         
-        {/* Left Column: Shift Management */}
-        <section className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-          <div className="p-5 border-b border-slate-100 bg-indigo-50/50 flex justify-between items-center">
-             <h2 className="text-lg font-bold text-indigo-900 flex items-center gap-2">
-                <Edit className="h-5 w-5 text-indigo-600" />
-                إدارة مناوبات الأطباء
-             </h2>
-             <button
-               onClick={() => setIsAddDoctorModalOpen(true)}
-               className="px-3 py-2 bg-indigo-600 text-white font-bold text-sm rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2 shadow-sm"
-             >
-                <UserPlus className="h-4 w-4" />
-                إضافة طبيب
-             </button>
+        <Card>
+          <div className="flex gap-4 items-center">
+             <div className="p-4 bg-indigo-100 text-indigo-600 rounded-xl">
+               <Users className="w-8 h-8" />
+             </div>
+             <div>
+               <p className="text-slate-500 font-medium text-sm">المواعيد المحجوزة</p>
+               <h4 className="text-2xl font-bold text-slate-800">{bookingOverview.bookedSlots}</h4>
+             </div>
           </div>
-          <div className="p-4 flex flex-col gap-3">
-             {localShifts.map((shiftInfo, idx) => (
-                <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-slate-200 rounded-xl bg-white shadow-sm">
-                   <div className="mb-3 sm:mb-0">
-                      <p className="font-bold text-slate-800 text-md mb-1">{shiftInfo.doctorName}</p>
-                      <p className="text-xs font-bold text-indigo-600 bg-indigo-50 inline-block px-2 py-1 rounded-md border border-indigo-100">
-                        الوردية: {shiftInfo.shift}
-                      </p>
-                   </div>
-                   <button 
-                     onClick={() => handleOpenShiftModal(shiftInfo.doctorId, shiftInfo.shift)}
-                     className="px-4 py-2 bg-slate-100 text-slate-700 font-bold text-sm rounded-lg hover:bg-indigo-100 hover:text-indigo-700 transition-colors flex items-center justify-center gap-2"
-                   >
-                      تعديل الوردية
-                      <Edit className="h-4 w-4" />
-                   </button>
-                </div>
-             ))}
+        </Card>
+
+        <Card>
+          <div className="flex gap-4 items-center">
+             <div className="p-4 bg-emerald-100 text-emerald-600 rounded-xl">
+               <UserCog className="w-8 h-8" />
+             </div>
+             <div>
+               <p className="text-slate-500 font-medium text-sm">مواعيد متاحة</p>
+               <h4 className="text-2xl font-bold text-slate-800">{bookingOverview.availableSlots}</h4>
+             </div>
           </div>
-        </section>
+        </Card>
 
-        {/* Right Column: Appointment Reassignments */}
-        <section className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-          <div className="p-5 border-b border-slate-100 bg-amber-50/50">
-             <h2 className="text-lg font-bold text-amber-900 flex items-center gap-2">
-                <RefreshCw className="h-5 w-5 text-amber-600" />
-                إحالة المواعيد (تغيير الطبيب)
-             </h2>
+        <Card>
+          <div className="flex gap-4 items-center">
+             <div className="p-4 bg-purple-100 text-purple-600 rounded-xl">
+               <Clock className="w-8 h-8" />
+             </div>
+             <div>
+               <p className="text-slate-500 font-medium text-sm">نسبة الإنجاز</p>
+               <h4 className="text-2xl font-bold text-slate-800">{bookingOverview.completionRate}</h4>
+             </div>
           </div>
-          <div className="p-4 flex flex-col gap-3 max-h-[500px] overflow-y-auto">
-             {localAppointments.map(app => {
-                const isReassigned = 'reassignedTo' in app;
-                return (
-                   <div key={app.id} className={`flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-xl shadow-sm transition-all ${isReassigned ? 'border-emerald-200 bg-emerald-50/30' : 'border-slate-200 bg-white'}`}>
-                      <div className="mb-3 sm:mb-0 text-sm">
-                         <p className="font-bold text-slate-800 flex items-center gap-2">
-                           <User className="h-4 w-4" />
-                           {app.patientName}
-                         </p>
-                         <p className="text-slate-500 mt-1">تاريخ: {app.date} | الوقت: {app.time}</p>
-                         {isReassigned && (
-                            <p className="text-emerald-700 font-bold mt-2 text-xs flex items-center gap-1">
-                               <CheckSquare className="h-3 w-3" />
-                               تمت الإحالة إلى: {(app as any).reassignedTo}
-                            </p>
-                         )}
-                      </div>
-                      {!isReassigned ? (
-                         <button 
-                           onClick={() => handleReassign(app.id)}
-                           className="px-4 py-2 bg-amber-100 text-amber-700 font-bold text-sm rounded-lg hover:bg-amber-200 transition-colors flex items-center justify-center gap-2"
-                         >
-                            إحالة الموعد
-                            <RefreshCw className="h-4 w-4" />
-                         </button>
-                      ) : (
-                         <span className="px-4 py-2 bg-emerald-100 text-emerald-700 font-bold text-sm rounded-lg flex items-center justify-center">
-                            مُحال
-                         </span>
-                      )}
-                   </div>
-                );
-             })}
-          </div>
-        </section>
+        </Card>
+      </div>
 
-      </main>
-
-      {/* Add Doctor Modal */}
-      {isAddDoctorModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-           <div className="bg-white rounded-2xl w-full max-w-sm shadow-xl animate-in zoom-in-95 duration-200 overflow-hidden">
-              <div className="border-b border-indigo-100 bg-indigo-50 px-6 py-4 flex items-center justify-between z-10">
-                 <h2 className="text-xl font-bold flex items-center gap-2 text-indigo-900">
-                    <UserPlus className="h-5 w-5 text-indigo-600" />
-                    إضافة طبيب جديد
-                 </h2>
-                 <button onClick={() => setIsAddDoctorModalOpen(false)} className="p-2 hover:bg-indigo-100 rounded-full transition-colors text-indigo-700">
-                    <X className="h-5 w-5 text-indigo-600" />
-                 </button>
-              </div>
-              <div className="p-6">
-                 <form onSubmit={handleAddDoctor} className="flex flex-col gap-5">
-                    <div>
-                      <label className="text-sm font-bold text-slate-700 block mb-2">اسم الطبيب الكامل:</label>
-                      <input 
-                        type="text"
-                        value={newDoctorName}
-                        onChange={(e) => setNewDoctorName(e.target.value)}
-                        placeholder="مثال: د. أحمد خالد..."
-                        className="px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none w-full bg-slate-50 focus:bg-white transition-colors"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="text-sm font-bold text-slate-700 block mb-2">اختر الوردية (المناوبة):</label>
-                      <select 
-                        value={newDoctorShift}
-                        onChange={(e) => setNewDoctorShift(e.target.value)}
-                        className="px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none w-full bg-slate-50 focus:bg-white transition-colors"
-                        required
-                      >
-                         <option value="صباحي (08:00 - 16:00)">صباحي (08:00 - 16:00)</option>
-                         <option value="مسائي (16:00 - 00:00)">مسائي (16:00 - 00:00)</option>
-                         <option value="ليلي (00:00 - 08:00)">ليلي (00:00 - 08:00)</option>
-                      </select>
-                    </div>
-                    <div className="flex gap-3 mt-2">
-                       <button type="submit" className="flex-1 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 shadow-sm transition-colors">إضافة الطبيب</button>
-                       <button type="button" onClick={() => setIsAddDoctorModalOpen(false)} className="px-5 py-3 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition-colors">إلغاء</button>
-                    </div>
-                 </form>
-              </div>
-           </div>
-        </div>
-      )}
-
-      {/* Edit Shift Modal */}
-      {isShiftModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-           <div className="bg-white rounded-2xl w-full max-w-sm shadow-xl animate-in zoom-in-95 duration-200">
-              <div className="border-b border-slate-100 px-6 py-4 flex items-center justify-between z-10">
-                 <h2 className="text-xl font-bold flex items-center gap-2">تعديل الوردية</h2>
-                 <button onClick={() => setIsShiftModalOpen(false)} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
-                    <X className="h-5 w-5 text-slate-500" />
-                 </button>
-              </div>
-              <div className="p-6">
-                 <form onSubmit={handleSaveShift} className="flex flex-col gap-4">
-                    <label className="text-sm font-bold text-slate-700">اختر الوردية الجديدة:</label>
-                    <select 
-                      value={newShiftValue}
-                      onChange={(e) => setNewShiftValue(e.target.value)}
-                      className="px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none w-full bg-white"
-                      required
-                    >
-                       <option value="صباحي (08:00 - 16:00)">صباحي (08:00 - 16:00)</option>
-                       <option value="مسائي (16:00 - 00:00)">مسائي (16:00 - 00:00)</option>
-                       <option value="ليلي (00:00 - 08:00)">ليلي (00:00 - 08:00)</option>
-                    </select>
-                    <div className="flex gap-2 mt-2">
-                       <button type="submit" className="flex-1 py-3 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700">حفظ التعديل</button>
-                       <button type="button" onClick={() => setIsShiftModalOpen(false)} className="px-4 py-3 bg-slate-100 text-slate-700 font-bold rounded-lg hover:bg-slate-200">إلغاء</button>
-                    </div>
-                 </form>
-              </div>
-           </div>
-        </div>
-      )}
-
+      <Card noPadding>
+         <CardHeader>
+            <CardTitle>جدول مناوبات الأطباء (اليوم)</CardTitle>
+         </CardHeader>
+         <Table>
+            <Thead>
+               <Tr>
+                 <Th>رقم الطبيب</Th>
+                 <Th>اسم الطبيب</Th>
+                 <Th>فترة المناوبة</Th>
+                 <Th>حالة الحضور</Th>
+               </Tr>
+            </Thead>
+            <Tbody>
+               {doctorShiftTable.map((doc: any, idx: number) => (
+                 <Tr key={idx}>
+                   <Td className="font-mono text-slate-500">{doc.doctorId}</Td>
+                   <Td className="font-bold text-slate-800">{doc.doctorName}</Td>
+                   <Td>
+                      <span className={`px-3 py-1 rounded-full text-xs font-bold ${doc.shift.includes('صباحي') ? 'bg-amber-100 text-amber-700' : doc.shift.includes('مسائي') ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-800 text-white'}`}>
+                        {doc.shift}
+                      </span>
+                   </Td>
+                   <Td>
+                      <span className="text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg text-xs font-bold">حاضر</span>
+                   </Td>
+                 </Tr>
+               ))}
+            </Tbody>
+         </Table>
+      </Card>
     </div>
   );
 }
