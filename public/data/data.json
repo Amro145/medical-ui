@@ -1,412 +1,651 @@
-  {
-    "patients": [
-      {
-        "id": "patient_1",
-        "role": "Patient",
-        "profile": {
-          "name": "أحمد محمود",
-          "phone": "0501234567",
-          "address": "الرياض، حي الملقا",
-          "bloodType": "O+"
-        },
-        "upcomingAppointment": {
-          "id": "app_1",
-          "date": "2026-04-10",
-          "time": "10:00",
-          "doctorId": "doc_1",
-          "doctorName": "د. خالد عبد الرحمن",
-          "status": "مؤكد"
-        },
-        "medicalHistory": [
-          {
-            "id": "hist_1",
-            "diagnosis": "التهاب الشعب الهوائية",
-            "date": "2025-11-15",
-            "doctorId": "doc_1",
-            "doctorName": "د. خالد عبد الرحمن"
-          }
-        ],
-        "medications": {
-          "toBeDispensed": [
-            {
-              "id": "pres_1",
-              "medicineId": "med_1",
-              "name": "بانادول",
-              "dosage": "500 ملغ مرتين يومياً",
-              "duration": "5 أيام"
-            }
-          ],
-          "alreadyDispensed": [
-            {
-              "id": "pres_2",
-              "medicineId": "med_2",
-              "name": "أوجمنتين",
-              "date": "2025-11-15",
-              "pharmacyName": "صيدلية المستشفى المركزية"
-            }
-          ]
-        },
-        "labTests": {
-          "required": [
-            {
-              "id": "test_req_1",
-              "testId": "cat_1",
-              "testName": "صورة دم كاملة (CBC)",
-              "priority": "عالي"
-            }
-          ],
-          "completed": [
-            {
-              "id": "test_comp_1",
-              "testId": "cat_2",
-              "testName": "تحليل سكر تراكمي",
-              "date": "2025-05-20",
-              "labCenterName": "مختبر البرج",
-              "resultSummary": "طبيعي - 5.4%"
-            }
-          ]
-        }
-      },
-      {
-        "id": "patient_2",
-        "role": "Patient",
-        "profile": {
-          "name": "فاطمة علي",
-          "phone": "0507654321",
-          "address": "جدة، حي الشاطئ",
-          "bloodType": "A-"
-        },
-        "upcomingAppointment": {
-          "id": "app_2",
-          "date": "2026-04-11",
-          "time": "11:30",
-          "doctorId": "doc_1",
-          "doctorName": "د. خالد عبد الرحمن",
-          "status": "قيد الانتظار"
-        },
-        "medicalHistory": [
-          {
-            "id": "hist_2",
-            "diagnosis": "كسر في الساعد",
-            "date": "2024-03-10",
-            "doctorId": "doc_1",
-            "doctorName": "د. خالد عبد الرحمن"
-          }
-        ],
-        "medications": {
-          "toBeDispensed": [],
-          "alreadyDispensed": [
-            {
-              "id": "pres_3",
-              "medicineId": "med_3",
-              "name": "بروفين",
-              "date": "2024-03-10",
-              "pharmacyName": "صيدلية النهدي"
-            }
-          ]
-        },
-        "labTests": {
-          "required": [
-            {
-              "id": "test_req_2",
-              "testId": "cat_4",
-              "testName": "أشعة سينية للصدر",
-              "priority": "متوسط"
-            }
-          ],
-          "completed": [
-            {
-              "id": "test_comp_2",
-              "testId": "cat_4",
-              "testName": "أشعة سينية للذراع",
-              "date": "2024-03-10",
-              "labCenterName": "مختبر المستشفى",
-              "resultSummary": "كسر شعري في عظمة الكعبرة"
-            }
-          ]
-        }
-      },
-      {
-        "id": "patient_3",
-        "role": "Patient",
-        "profile": {
-          "name": "عمر حسن",
-          "phone": "0559988776",
-          "address": "الدمام، حي الفيصلية",
-          "bloodType": "B+"
-        },
-        "upcomingAppointment": null,
-        "medicalHistory": [
-          {
-            "id": "hist_3",
-            "diagnosis": "ارتفاع ضغط الدم",
-            "date": "2023-01-20",
-            "doctorId": "doc_1",
-            "doctorName": "د. خالد عبد الرحمن"
-          }
-        ],
-        "medications": {
-          "toBeDispensed": [
-            {
-              "id": "pres_4",
-              "medicineId": "med_4",
-              "name": "أملوديبين",
-              "dosage": "5 ملغ مرة يومياً",
-              "duration": "30 يوم"
-            }
-          ],
-          "alreadyDispensed": []
-        },
-        "labTests": {
-          "required": [],
-          "completed": [
-            {
-              "id": "test_comp_3",
-              "testId": "cat_3",
-              "testName": "تحليل وظائف الكلى",
-              "date": "2023-01-19",
-              "labCenterName": "مختبر ألفا",
-              "resultSummary": "ضمن المعدلات الطبيعية"
-            }
-          ]
-        }
-      }
-    ],
-    "doctor": {
-      "id": "doc_1",
-      "role": "Doctor",
+{
+  "hospitalName": "مستشفى الأمل التخصصي",
+  "version": "1.0",
+  "patients": [
+    {
+      "id": "patient_1",
+      "role": "Patient",
       "profile": {
-        "name": "د. خالد عبد الرحمن",
-        "specialty": "الطب العام"
+        "name": "أحمد محمود",
+        "phone": "0501234567",
+        "address": "الرياض، حي الملقا",
+        "bloodType": "O+"
       },
-      "schedule": {
-        "bookedSlots": [
+      "upcomingAppointment": {
+        "id": "app_1",
+        "date": "2026-04-10",
+        "time": "10:00",
+        "doctorId": "doc_1",
+        "doctorName": "د. خالد عبد الرحمن",
+        "status": "مؤكد"
+      },
+      "medicalHistory": [
+        {
+          "id": "hist_1",
+          "diagnosis": "التهاب الشعب الهوائية",
+          "date": "2025-11-15",
+          "doctorId": "doc_1",
+          "doctorName": "د. خالد عبد الرحمن"
+        }
+      ],
+      "medications": {
+        "toBeDispensed": [
           {
-            "id": "app_1",
-            "date": "2026-04-10",
-            "time": "10:00",
-            "patientId": "patient_1",
-            "patientName": "أحمد محمود"
-          },
-          {
-            "id": "app_2",
-            "date": "2026-04-11",
-            "time": "11:30",
-            "patientId": "patient_2",
-            "patientName": "فاطمة علي"
+            "id": "pres_1",
+            "medicineId": "med_1",
+            "name": "بانادول",
+            "dosage": "500 ملغ مرتين يومياً",
+            "duration": "5 أيام"
           }
         ],
-        "freeSlots": [
+        "alreadyDispensed": [
           {
-            "date": "2026-04-10",
-            "time": "10:30"
-          },
+            "id": "pres_2",
+            "medicineId": "med_2",
+            "name": "أوجمنتين",
+            "date": "2025-11-15",
+            "pharmacyName": "صيدلية المستشفى المركزية"
+          }
+        ]
+      },
+      "labTests": {
+        "required": [
           {
-            "date": "2026-04-10",
-            "time": "11:00"
-          },
+            "id": "test_req_1",
+            "testId": "cat_1",
+            "testName": "صورة دم كاملة (CBC)",
+            "priority": "عالي"
+          }
+        ],
+        "completed": [
           {
-            "date": "2026-04-11",
-            "time": "10:00"
+            "id": "test_comp_1",
+            "testId": "cat_2",
+            "testName": "تحليل سكر تراكمي",
+            "date": "2025-05-20",
+            "labCenterName": "مختبر البرج",
+            "resultSummary": "طبيعي - 5.4%"
           }
         ]
       }
     },
-    "pharmacist": {
-      "id": "pharm_1",
-      "role": "Pharmacist",
+    {
+      "id": "patient_2",
+      "role": "Patient",
       "profile": {
-        "name": "ص. سارة سعيد"
+        "name": "فاطمة علي",
+        "phone": "0507654321",
+        "address": "جدة، حي الشاطئ",
+        "bloodType": "A-"
       },
-      "inventory": [
-        {
-          "medicineId": "med_1",
-          "name": "بانادول",
-          "stockLevel": 150,
-          "price": 10
-        },
-        {
-          "medicineId": "med_2",
-          "name": "أوجمنتين",
-          "stockLevel": 45,
-          "price": 20
-        },
-        {
-          "medicineId": "med_3",
-          "name": "بروفين",
-          "stockLevel": 80
-        },
-        {
-          "medicineId": "med_4",
-          "name": "أملوديبين",
-          "stockLevel": 60
-        }
-      ],
-      
-      "patientSearchMock": {
-        "patient_1": {
-          "patientName": "أحمد محمود",
-          "pending": [
-            {
-              "id": "pres_1",
-              "medicineId": "med_1",
-              "name": "بانادول",
-              "dosage": "500 ملغ مرتين يومياً",
-              "duration": "5 أيام"
-            }
-          ],
-          "history": [
-            {
-              "id": "pres_2",
-              "medicineId": "med_2",
-              "name": "أوجمنتين",
-              "date": "2025-11-15"
-            }
-          ]
-        },
-        "patient_2": {
-          "patientName": "فاطمة علي",
-          "pending": [],
-          "history": [
-            {
-              "id": "pres_3",
-              "medicineId": "med_3",
-              "name": "بروفين",
-              "date": "2024-03-10"
-            }
-          ]
-        },
-        "patient_3": {
-          "patientName": "عمر حسن",
-          "pending": [
-            {
-              "id": "pres_4",
-              "medicineId": "med_4",
-              "name": "أملوديبين",
-              "dosage": "5 ملغ مرة يومياً",
-              "duration": "30 يوم"
-            }
-          ],
-          "history": []
-        }
-      }
-    },
-    "labTech": {
-      "id": "lab_tech_1",
-      "role": "Lab Technician",
-      "profile": {
-        "name": "فني. سمير يوسف"
+      "upcomingAppointment": {
+        "id": "app_2",
+        "date": "2026-04-11",
+        "time": "11:30",
+        "doctorId": "doc_1",
+        "doctorName": "د. خالد عبد الرحمن",
+        "status": "قيد الانتظار"
       },
-      "testCatalog": [
+      "medicalHistory": [
         {
-          "testId": "cat_1",
-          "name": "صورة دم كاملة (CBC)",
-          "price": 100
-        },
-        {
-          "testId": "cat_2",
-          "name": "تحليل سكر تراكمي",
-          "price": 150
-        },
-        {
-          "testId": "cat_3",
-          "name": "تحليل وظائف الكلى",
-          "price": 200
-        },
-        {
-          "testId": "cat_4",
-          "name": "أشعة سينية",
-          "price": 250
-        }
-      ],
-      "patientRecordAccess": {
-        "patient_1": {
-          "patientName": "أحمد محمود",
-          "pending": [
-            {
-              "id": "test_req_1",
-              "testId": "cat_1",
-              "testName": "صورة دم كاملة (CBC)",
-              "priority": "عالي"
-            }
-          ],
-          "history": [
-            {
-              "id": "test_comp_1",
-              "testId": "cat_2",
-              "testName": "تحليل سكر تراكمي",
-              "date": "2025-05-20",
-              "resultSummary": "طبيعي - 5.4%"
-            }
-          ]
-        },
-        "patient_2": {
-          "patientName": "فاطمة علي",
-          "pending": [
-            {
-              "id": "test_req_2",
-              "testId": "cat_4",
-              "testName": "أشعة سينية للصدر",
-              "priority": "متوسط"
-            }
-          ],
-          "history": [
-            {
-              "id": "test_comp_2",
-              "testId": "cat_4",
-              "testName": "أشعة سينية للذراع",
-              "date": "2024-03-10",
-              "resultSummary": "كسر شعري في عظمة الكعبرة"
-            }
-          ]
-        },
-        "patient_3": {
-          "patientName": "عمر حسن",
-          "pending": [],
-          "history": [
-            {
-              "id": "test_comp_3",
-              "testId": "cat_3",
-              "testName": "تحليل وظائف الكلى",
-              "date": "2023-01-19",
-              "resultSummary": "ضمن المعدلات الطبيعية"
-            }
-          ]
-        }
-      }
-    },
-    "admin": {
-      "id": "admin_1",
-      "role": "Hospital Admin",
-      "profile": {
-        "name": "م. طارق سليمان"
-      },
-      "analytics": {
-        "dailyRevenue": 45000,
-        "bedOccupancy": "85%",
-        "totalVisits": 320,
-        "activePatients": 125
-      }
-    },
-    "deptManager": {
-      "id": "dept_mgr_1",
-      "role": "Dept Manager",
-      "profile": {
-        "name": "د. نادية إبراهيم"
-      },
-      "department": "الباطنة والطوارئ",
-      "doctorShiftTable": [
-        {
+          "id": "hist_2",
+          "diagnosis": "كسر في الساعد",
+          "date": "2024-03-10",
           "doctorId": "doc_1",
-          "doctorName": "د. خالد عبد الرحمن",
-          "shift": "صباحي (08:00 - 16:00)"
+          "doctorName": "د. خالد عبد الرحمن"
         }
       ],
-      "bookingOverview": {
-        "totalSlots": 20,
-        "bookedSlots": 15,
-        "availableSlots": 5,
-        "completionRate": "75%"
+      "medications": {
+        "toBeDispensed": [],
+        "alreadyDispensed": [
+          {
+            "id": "pres_3",
+            "medicineId": "med_3",
+            "name": "بروفين",
+            "date": "2024-03-10",
+            "pharmacyName": "صيدلية النهدي"
+          }
+        ]
+      },
+      "labTests": {
+        "required": [
+          {
+            "id": "test_req_2",
+            "testId": "cat_4",
+            "testName": "أشعة سينية للصدر",
+            "priority": "متوسط"
+          }
+        ],
+        "completed": [
+          {
+            "id": "test_comp_2",
+            "testId": "cat_4",
+            "testName": "أشعة سينية للذراع",
+            "date": "2024-03-10",
+            "labCenterName": "مختبر المستشفى",
+            "resultSummary": "كسر شعري في عظمة الكعبرة"
+          }
+        ]
+      }
+    },
+    {
+      "id": "patient_3",
+      "role": "Patient",
+      "profile": {
+        "name": "عمر حسن",
+        "phone": "0559988776",
+        "address": "الدمام، حي الفيصلية",
+        "bloodType": "B+"
+      },
+      "upcomingAppointment": null,
+      "medicalHistory": [
+        {
+          "id": "hist_3",
+          "diagnosis": "ارتفاع ضغط الدم",
+          "date": "2023-01-20",
+          "doctorId": "doc_1",
+          "doctorName": "د. خالد عبد الرحمن"
+        }
+      ],
+      "medications": {
+        "toBeDispensed": [
+          {
+            "id": "pres_4",
+            "medicineId": "med_4",
+            "name": "أملوديبين",
+            "dosage": "5 ملغ مرة يومياً",
+            "duration": "30 يوم"
+          }
+        ],
+        "alreadyDispensed": []
+      },
+      "labTests": {
+        "required": [],
+        "completed": [
+          {
+            "id": "test_comp_3",
+            "testId": "cat_3",
+            "testName": "تحليل وظائف الكلى",
+            "date": "2023-01-19",
+            "labCenterName": "مختبر ألفا",
+            "resultSummary": "ضمن المعدلات الطبيعية"
+          }
+        ]
+      }
+    },
+    {
+      "id": "patient_4",
+      "role": "Patient",
+      "profile": {
+        "name": "سارة سعيد",
+        "phone": "0543322111",
+        "address": "الرياض، حي الياسمين",
+        "bloodType": "O-"
+      },
+      "upcomingAppointment": {
+        "id": "app_4",
+        "date": "2026-04-12",
+        "time": "09:00",
+        "doctorId": "doc_1",
+        "doctorName": "د. خالد عبد الرحمن",
+        "status": "مؤكد"
+      },
+      "medicalHistory": [],
+      "medications": {
+        "toBeDispensed": [],
+        "alreadyDispensed": []
+      },
+      "labTests": {
+        "required": [],
+        "completed": []
+      }
+    },
+    {
+      "id": "patient_5",
+      "role": "Patient",
+      "profile": {
+        "name": "يوسف كامل",
+        "phone": "0561112223",
+        "address": "الخبر، الحزام الذهبي",
+        "bloodType": "AB+"
+      },
+      "upcomingAppointment": {
+        "id": "app_5",
+        "date": "2026-04-12",
+        "time": "14:00",
+        "doctorId": "doc_1",
+        "doctorName": "د. خالد عبد الرحمن",
+        "status": "قيد الانتظار"
+      },
+      "medicalHistory": [
+        {
+          "id": "hist_5",
+          "diagnosis": "الربو التحسسي",
+          "date": "2022-05-15",
+          "doctorId": "doc_1",
+          "doctorName": "د. خالد عبد الرحمن"
+        }
+      ],
+      "medications": {
+        "toBeDispensed": [
+          {
+            "id": "pres_5",
+            "medicineId": "med_10",
+            "name": "بخاخ فنتولين",
+            "dosage": "بختين عند اللزوم",
+            "duration": "مستمر"
+          }
+        ],
+        "alreadyDispensed": []
+      },
+      "labTests": {
+        "required": [
+          {
+            "id": "test_req_3",
+            "testId": "cat_6",
+            "testName": "فحص وظائف الرئة",
+            "priority": "عادي"
+          }
+        ],
+        "completed": []
+      }
+    },
+    {
+      "id": "patient_6",
+      "role": "Patient",
+      "profile": {
+        "name": "ليلى سعود",
+        "phone": "0598887776",
+        "address": "مكة المكرمة، حي العوالي",
+        "bloodType": "A+"
+      },
+      "upcomingAppointment": null,
+      "medicalHistory": [
+        {
+          "id": "hist_6",
+          "diagnosis": "التهاب المفاصل الروماتويدي",
+          "date": "2021-11-10",
+          "doctorId": "doc_1",
+          "doctorName": "د. خالد عبد الرحمن"
+        }
+      ],
+      "medications": {
+        "toBeDispensed": [],
+        "alreadyDispensed": [
+          {
+            "id": "pres_6",
+            "medicineId": "med_11",
+            "name": "ميثوتريكسات",
+            "date": "2025-12-01",
+            "pharmacyName": "صيدلية الدواء"
+          }
+        ]
+      },
+      "labTests": {
+        "required": [],
+        "completed": [
+          {
+            "id": "test_comp_4",
+            "testId": "cat_7",
+            "testName": "تحليل سرعة ترسب الدم (ESR)",
+            "date": "2025-12-01",
+            "labCenterName": "مختبر البرج",
+            "resultSummary": "مرتفع - 45 مم/ساعة"
+          }
+        ]
+      }
+    },
+    {
+      "id": "patient_7",
+      "role": "Patient",
+      "profile": {
+        "name": "ماجد النصار",
+        "phone": "0582233445",
+        "address": "الرياض، حي الصحافة",
+        "bloodType": "O+"
+      },
+      "upcomingAppointment": {
+        "id": "app_6",
+        "date": "2026-04-13",
+        "time": "15:30",
+        "doctorId": "doc_1",
+        "doctorName": "د. خالد عبد الرحمن",
+        "status": "مؤكد"
+      },
+      "medicalHistory": [],
+      "medications": {
+        "toBeDispensed": [
+          {
+            "id": "pres_7",
+            "medicineId": "med_8",
+            "name": "فيتامين د",
+            "dosage": "50000 وحدة دولية اسبوعيا",
+            "duration": "8 اسابيع"
+          }
+        ],
+        "alreadyDispensed": []
+      },
+      "labTests": {
+        "required": [],
+        "completed": [
+          {
+            "id": "test_comp_5",
+            "testId": "cat_8",
+            "testName": "تحليل فيتامين د",
+            "date": "2026-03-10",
+            "labCenterName": "مختبر المستشفى",
+            "resultSummary": "نقص حاد - 12 نانوجرام/مل"
+          }
+        ]
+      }
+    },
+    {
+      "id": "patient_8",
+      "role": "Patient",
+      "profile": {
+        "name": "نورة عبد العزيز",
+        "phone": "0509988112",
+        "address": "المدينة المنورة، حي العزيزية",
+        "bloodType": "B-"
+      },
+      "upcomingAppointment": null,
+      "medicalHistory": [
+        {
+          "id": "hist_7",
+          "diagnosis": "فقر دم (أنيميا)",
+          "date": "2026-01-05",
+          "doctorId": "doc_1",
+          "doctorName": "د. خالد عبد الرحمن"
+        }
+      ],
+      "medications": {
+        "toBeDispensed": [],
+        "alreadyDispensed": [
+          {
+            "id": "pres_8",
+            "medicineId": "med_12",
+            "name": "حبوب الحديد (فيروجلوبين)",
+            "date": "2026-01-06",
+            "pharmacyName": "صيدلية أستر"
+          }
+        ]
+      },
+      "labTests": {
+        "required": [],
+        "completed": [
+          {
+            "id": "test_comp_6",
+            "testId": "cat_1",
+            "testName": "صورة دم كاملة (CBC)",
+            "date": "2026-01-05",
+            "labCenterName": "مختبر المستشفى",
+            "resultSummary": "الهيموجلوبين 9.8 جم/ديسيلتر"
+          }
+        ]
       }
     }
+  ],
+  "doctor": {
+    "id": "doc_1",
+    "role": "Doctor",
+    "profile": {
+      "name": "د. خالد عبد الرحمن",
+      "specialty": "الطب العام"
+    },
+    "schedule": {
+      "bookedSlots": [
+        {
+          "id": "app_1",
+          "date": "2026-04-10",
+          "time": "10:00",
+          "patientId": "patient_1",
+          "patientName": "أحمد محمود"
+        },
+        {
+          "id": "app_2",
+          "date": "2026-04-11",
+          "time": "11:30",
+          "patientId": "patient_2",
+          "patientName": "فاطمة علي"
+        },
+        {
+          "id": "app_4",
+          "date": "2026-04-12",
+          "time": "09:00",
+          "patientId": "patient_4",
+          "patientName": "سارة سعيد"
+        },
+        {
+          "id": "app_5",
+          "date": "2026-04-12",
+          "time": "14:00",
+          "patientId": "patient_5",
+          "patientName": "يوسف كامل"
+        },
+        {
+          "id": "app_6",
+          "date": "2026-04-13",
+          "time": "15:30",
+          "patientId": "patient_7",
+          "patientName": "ماجد النصار"
+        }
+      ],
+      "freeSlots": [
+        { "date": "2026-04-10", "time": "08:00" },
+        { "date": "2026-04-10", "time": "08:30" },
+        { "date": "2026-04-10", "time": "09:00" },
+        { "date": "2026-04-10", "time": "10:30" },
+        { "date": "2026-04-10", "time": "11:00" },
+        { "date": "2026-04-10", "time": "12:00" },
+        { "date": "2026-04-10", "time": "12:30" },
+        { "date": "2026-04-10", "time": "13:00" },
+        { "date": "2026-04-11", "time": "09:00" },
+        { "date": "2026-04-11", "time": "10:00" },
+        { "date": "2026-04-11", "time": "12:00" },
+        { "date": "2026-04-11", "time": "12:30" },
+        { "date": "2026-04-11", "time": "14:00" },
+        { "date": "2026-04-11", "time": "15:00" },
+        { "date": "2026-04-12", "time": "10:00" },
+        { "date": "2026-04-12", "time": "11:00" },
+        { "date": "2026-04-12", "time": "13:00" },
+        { "date": "2026-04-13", "time": "08:00" },
+        { "date": "2026-04-13", "time": "09:30" },
+        { "date": "2026-04-13", "time": "10:30" },
+        { "date": "2026-04-14", "time": "08:00" },
+        { "date": "2026-04-14", "time": "08:30" },
+        { "date": "2026-04-14", "time": "10:00" },
+        { "date": "2026-04-14", "time": "13:30" }
+      ]
+    }
+  },
+  "pharmacist": {
+    "id": "pharm_1",
+    "role": "Pharmacist",
+    "profile": {
+      "name": "ص. سارة سعيد"
+    },
+    "inventory": [
+      { "medicineId": "med_1", "name": "بانادول", "stockLevel": 150, "price": 10 },
+      { "medicineId": "med_2", "name": "أوجمنتين", "stockLevel": 45, "price": 20 },
+      { "medicineId": "med_3", "name": "بروفين", "stockLevel": 80, "price": 15 },
+      { "medicineId": "med_4", "name": "أملوديبين", "stockLevel": 60, "price": 30 },
+      { "medicineId": "med_5", "name": "ليبيتور", "stockLevel": 120, "price": 65 },
+      { "medicineId": "med_6", "name": "كونكور", "stockLevel": 90, "price": 40 },
+      { "medicineId": "med_7", "name": "جلوكوفاج", "stockLevel": 200, "price": 25 },
+      { "medicineId": "med_8", "name": "فيتامين د", "stockLevel": 300, "price": 50 },
+      { "medicineId": "med_9", "name": "لورينيز", "stockLevel": 55, "price": 35 },
+      { "medicineId": "med_10", "name": "بخاخ فنتولين", "stockLevel": 30, "price": 45 },
+      { "medicineId": "med_11", "name": "ميثوتريكسات", "stockLevel": 15, "price": 120 },
+      { "medicineId": "med_12", "name": "حبوب الحديد (فيروجلوبين)", "stockLevel": 85, "price": 40 },
+      { "medicineId": "med_13", "name": "ليريكا", "stockLevel": 10, "price": 180 },
+      { "medicineId": "med_14", "name": "بسكوبان", "stockLevel": 140, "price": 15 },
+      { "medicineId": "med_15", "name": "ميوكوسولفان", "stockLevel": 70, "price": 22 }
+    ],
+    "patientSearchMock": {
+      "patient_1": {
+        "patientName": "أحمد محمود",
+        "pending": [
+          { "id": "pres_1", "medicineId": "med_1", "name": "بانادول", "dosage": "500 ملغ مرتين يومياً", "duration": "5 أيام" }
+        ],
+        "history": [
+          { "id": "pres_2", "medicineId": "med_2", "name": "أوجمنتين", "date": "2025-11-15" }
+        ]
+      },
+      "patient_2": {
+        "patientName": "فاطمة علي",
+        "pending": [],
+        "history": [
+          { "id": "pres_3", "medicineId": "med_3", "name": "بروفين", "date": "2024-03-10" }
+        ]
+      },
+      "patient_3": {
+        "patientName": "عمر حسن",
+        "pending": [
+          { "id": "pres_4", "medicineId": "med_4", "name": "أملوديبين", "dosage": "5 ملغ مرة يومياً", "duration": "30 يوم" }
+        ],
+        "history": []
+      },
+      "patient_4": { "patientName": "سارة سعيد", "pending": [], "history": [] },
+      "patient_5": {
+        "patientName": "يوسف كامل",
+        "pending": [
+          { "id": "pres_5", "medicineId": "med_10", "name": "بخاخ فنتولين", "dosage": "بختين عند اللزوم", "duration": "مستمر" }
+        ],
+        "history": []
+      },
+      "patient_6": {
+        "patientName": "ليلى سعود",
+        "pending": [],
+        "history": [
+          { "id": "pres_6", "medicineId": "med_11", "name": "ميثوتريكسات", "date": "2025-12-01" }
+        ]
+      },
+      "patient_7": {
+        "patientName": "ماجد النصار",
+        "pending": [
+          { "id": "pres_7", "medicineId": "med_8", "name": "فيتامين د", "dosage": "50000 وحدة دولية اسبوعيا", "duration": "8 اسابيع" }
+        ],
+        "history": []
+      },
+      "patient_8": {
+        "patientName": "نورة عبد العزيز",
+        "pending": [],
+        "history": [
+          { "id": "pres_8", "medicineId": "med_12", "name": "حبوب الحديد (فيروجلوبين)", "date": "2026-01-06" }
+        ]
+      }
+    }
+  },
+  "labTech": {
+    "id": "lab_tech_1",
+    "role": "Lab Technician",
+    "profile": {
+      "name": "فني. سمير يوسف"
+    },
+    "testCatalog": [
+      { "testId": "cat_1", "name": "صورة دم كاملة (CBC)", "price": 100 },
+      { "testId": "cat_2", "name": "تحليل سكر تراكمي", "price": 150 },
+      { "testId": "cat_3", "name": "تحليل وظائف الكلى", "price": 200 },
+      { "testId": "cat_4", "name": "أشعة سينية", "price": 250 },
+      { "testId": "cat_5", "name": "تحليل وظائف الكبد (LFT)", "price": 220 },
+      { "testId": "cat_6", "name": "فحص وظائف الرئة", "price": 300 },
+      { "testId": "cat_7", "name": "تحليل سرعة ترسب الدم (ESR)", "price": 80 },
+      { "testId": "cat_8", "name": "تحليل فيتامين د", "price": 350 },
+      { "testId": "cat_9", "name": "مسحة حلق (Strep A)", "price": 120 },
+      { "testId": "cat_10", "name": "تحليل الكوليسترول والدهون", "price": 180 },
+      { "testId": "cat_11", "name": "أشعة مقطعية (CT Scan)", "price": 800 },
+      { "testId": "cat_12", "name": "رنين مغناطيسي (MRI)", "price": 1500 }
+    ],
+    "patientRecordAccess": {
+      "patient_1": {
+        "patientName": "أحمد محمود",
+        "pending": [
+          { "id": "test_req_1", "testId": "cat_1", "testName": "صورة دم كاملة (CBC)", "priority": "عالي" }
+        ],
+        "history": [
+          { "id": "test_comp_1", "testId": "cat_2", "testName": "تحليل سكر تراكمي", "date": "2025-05-20", "resultSummary": "طبيعي - 5.4%" }
+        ]
+      },
+      "patient_2": {
+        "patientName": "فاطمة علي",
+        "pending": [
+          { "id": "test_req_2", "testId": "cat_4", "testName": "أشعة سينية للصدر", "priority": "متوسط" }
+        ],
+        "history": [
+          { "id": "test_comp_2", "testId": "cat_4", "testName": "أشعة سينية للذراع", "date": "2024-03-10", "resultSummary": "كسر شعري في عظمة الكعبرة" }
+        ]
+      },
+      "patient_3": {
+        "patientName": "عمر حسن",
+        "pending": [],
+        "history": [
+          { "id": "test_comp_3", "testId": "cat_3", "testName": "تحليل وظائف الكلى", "date": "2023-01-19", "resultSummary": "ضمن المعدلات الطبيعية" }
+        ]
+      },
+      "patient_4": { "patientName": "سارة سعيد", "pending": [], "history": [] },
+      "patient_5": {
+        "patientName": "يوسف كامل",
+        "pending": [
+          { "id": "test_req_3", "testId": "cat_6", "testName": "فحص وظائف الرئة", "priority": "عادي" }
+        ],
+        "history": []
+      },
+      "patient_6": {
+        "patientName": "ليلى سعود",
+        "pending": [],
+        "history": [
+          { "id": "test_comp_4", "testId": "cat_7", "testName": "تحليل سرعة ترسب الدم (ESR)", "date": "2025-12-01", "resultSummary": "مرتفع - 45 مم/ساعة" }
+        ]
+      },
+      "patient_7": {
+        "patientName": "ماجد النصار",
+        "pending": [],
+        "history": [
+          { "id": "test_comp_5", "testId": "cat_8", "testName": "تحليل فيتامين د", "date": "2026-03-10", "resultSummary": "نقص حاد - 12 نانوجرام/مل" }
+        ]
+      },
+      "patient_8": {
+        "patientName": "نورة عبد العزيز",
+        "pending": [],
+        "history": [
+          { "id": "test_comp_6", "testId": "cat_1", "testName": "صورة دم كاملة (CBC)", "date": "2026-01-05", "resultSummary": "الهيموجلوبين 9.8 جم/ديسيلتر" }
+        ]
+      }
+    }
+  },
+  "admin": {
+    "id": "admin_1",
+    "role": "Hospital Admin",
+    "profile": {
+      "name": "م. طارق سليمان"
+    },
+    "analytics": {
+      "dailyRevenue": 145000,
+      "bedOccupancy": "92%",
+      "totalVisits": 850,
+      "activePatients": 412
+    }
+  },
+  "deptManager": {
+    "id": "dept_mgr_1",
+    "role": "Dept Manager",
+    "profile": {
+      "name": "د. نادية إبراهيم"
+    },
+    "department": "الباطنة والطوارئ",
+    "doctorShiftTable": [
+      { "doctorId": "doc_1", "doctorName": "د. خالد عبد الرحمن", "shift": "صباحي (08:00 - 16:00)" },
+      { "doctorId": "doc_2", "doctorName": "د. فهد الدوسري", "shift": "صباحي (08:00 - 16:00)" },
+      { "doctorId": "doc_3", "doctorName": "د. ريم الفارس", "shift": "مسائي (16:00 - 00:00)" },
+      { "doctorId": "doc_4", "doctorName": "د. ياسر المنصور", "shift": "مسائي (16:00 - 00:00)" },
+      { "doctorId": "doc_5", "doctorName": "د. وليد القحطاني", "shift": "ليلي (00:00 - 08:00)" },
+      { "doctorId": "doc_6", "doctorName": "د. منى السعيد", "shift": "ليلي (00:00 - 08:00)" }
+    ],
+    "bookingOverview": {
+      "totalSlots": 120,
+      "bookedSlots": 98,
+      "availableSlots": 22,
+      "completionRate": "82%"
+    }
   }
+}
