@@ -108,7 +108,7 @@ export default function PharmacistInventoryPage() {
                         type="number" 
                         value={editStock}
                         onChange={(e) => setEditStock(Number(e.target.value))}
-                        className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none transition-colors"
+                        className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none transition-colors text-slate-900 font-bold"
                         required
                         min="0"
                       />
@@ -119,7 +119,7 @@ export default function PharmacistInventoryPage() {
                         type="number" 
                         value={editPrice}
                         onChange={(e) => setEditPrice(Number(e.target.value))}
-                        className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none transition-colors"
+                        className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none transition-colors text-slate-900 font-bold"
                         required
                         min="0"
                         step="0.01"

@@ -305,7 +305,7 @@ export default function PatientDashboard() {
                         type="text" 
                         value={editPhone}
                         onChange={(e) => setEditPhone(e.target.value)}
-                        className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-left bg-slate-50 focus:bg-white transition-colors"
+                        className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-left bg-slate-50 focus:bg-white transition-colors text-slate-900 font-bold"
                         required
                         dir="ltr"
                       />
@@ -316,7 +316,7 @@ export default function PatientDashboard() {
                         type="text" 
                         value={editAddress}
                         onChange={(e) => setEditAddress(e.target.value)}
-                        className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-slate-50 focus:bg-white transition-colors"
+                        className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-slate-50 focus:bg-white transition-colors text-slate-900 font-bold"
                         required
                       />
                     </div>

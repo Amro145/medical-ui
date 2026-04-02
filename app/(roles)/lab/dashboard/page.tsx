@@ -153,7 +153,7 @@ export default function LabDashboard() {
                         type="number" 
                         value={editPrice}
                         onChange={(e) => setEditPrice(Number(e.target.value))}
-                        className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none transition-colors font-bold text-slate-800"
+                        className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none transition-colors font-bold text-slate-900"
                         required
                         min="0"
                         step="0.01"
