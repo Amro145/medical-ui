@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { Microscope, LayoutDashboard, FlaskConical, FileCheck } from "lucide-react";
 import { Sidebar } from "@/components/layout/sidebar";

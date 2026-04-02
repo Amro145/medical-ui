@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { Activity, Home, Calendar, Clock, Settings, FileText } from "lucide-react";
 import { Sidebar } from "@/components/layout/sidebar";

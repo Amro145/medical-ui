@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { Building, LayoutDashboard, Users, UserCog, Settings } from "lucide-react";
 import { Sidebar } from "@/components/layout/sidebar";

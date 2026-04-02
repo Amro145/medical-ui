@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { Stethoscope, LayoutDashboard, Calendar, Users, FileSignature } from "lucide-react";
 import { Sidebar } from "@/components/layout/sidebar";
