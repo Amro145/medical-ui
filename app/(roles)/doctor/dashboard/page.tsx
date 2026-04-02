@@ -101,7 +101,7 @@ export default function DoctorDashboard() {
                    <Td className="font-bold text-slate-800">{app.patientName}</Td>
                    <Td className="font-mono text-slate-500 text-xs">{app.patientId}</Td>
                    <Td>
-                      <Button variant="secondary" size="sm" className="bg-green-50 text-green-600 hover:bg-green-100 hover:text-green-700 shadow-none border border-green-200">
+                      <Button variant="secondary" size="sm" className="bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-800 shadow-none border border-green-200">
                         فتح الملف والتسجيل
                       </Button>
                    </Td>
