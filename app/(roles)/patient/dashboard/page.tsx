@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import data from "@/public/data/data.json";
-import { UserCircle, CalendarDays, Phone, MapPin, Droplet, Clock, CalendarPlus, Loader2, Edit3, X, CheckSquare, Activity } from "lucide-react";
+import { UserCircle, CalendarDays, Phone, MapPin, Droplet, Clock, CalendarPlus, Loader2, Edit3, X, CheckSquare, Activity, LogOut } from "lucide-react";
 import Link from "next/link";
 
 export default function PatientDashboard() {

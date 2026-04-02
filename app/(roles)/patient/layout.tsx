@@ -22,8 +22,12 @@ export default function PatientLayout({
             <Home className="h-5 w-5" />
             لوحة المتابعة
           </Link>
-          <button className="flex items-center gap-3 px-4 py-3 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-colors w-full text-right cursor-not-allowed opacity-50 mt-2">
+          <Link href="/patient/appointments" className="flex items-center gap-3 px-4 py-3 text-slate-600 font-bold rounded-xl hover:bg-slate-50 hover:text-emerald-700 transition-colors w-full text-right mt-2">
             <Calendar className="h-5 w-5" />
+            حجز المواعيد
+          </Link>
+          <button className="flex items-center gap-3 px-4 py-3 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-colors w-full text-right cursor-not-allowed opacity-50 mt-2">
+            <Clock className="h-5 w-5" />
             المواعيد السابقة
           </button>
           <button className="flex items-center gap-3 px-4 py-3 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-colors w-full text-right cursor-not-allowed opacity-50">
